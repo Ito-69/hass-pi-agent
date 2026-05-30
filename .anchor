@@ -4,5 +4,12 @@
   "name": "hass-pi-agent",
   "description": "",
   "github": "https://github.com/dkmaker/hass-pi-agent",
-  "originalpath": "/home/cp/code/dkmaker/hass-pi-agent"
+  "originalpath": "/home/cp/code/dkmaker/hass-pi-agent",
+  "custom": [
+    {
+      "key": "issuesProject",
+      "value": "hass-pi-agent",
+      "includeInContext": true
+    }
+  ]
 }

@@ -7,3 +7,50 @@ node_modules/
 .pi/extensions/pi-docs
 .pi/extensions/project
 .pi/extensions/web-search.ts
+
+# >>> pi state-files (auto-managed) — do not edit >>>
+# convention dirs — always machine-local
+.pi/state/
+.pi/cache/
+
+# @dkmaker/pi-extension-package-manager
+# pi platform settings (enabled packages, model prefs, UI) — per-machine
+.pi/settings.json
+
+# auto-context
+# Auto-context-reset working files — machine-local
+.pi/auto-restart/
+
+# confirm-mode
+# Per-session approval decisions — machine-local
+.pi/approval_state.json
+
+# git-commands
+# Pi platform: project-scoped git-sourced package clones — machine-local
+.pi/git/
+# Pi platform: project-scoped npm package installs — machine-local
+.pi/npm/
+
+# http
+# Active session baseUrl/headers — machine-local
+.pi/http/session.json
+# On-disk response cache — machine-local
+.http_response/
+
+# plan-mode
+# Machine-local working state
+.pi/plan_state.json
+
+# processes
+# Live process PIDs/health — machine-local
+.pi/processes/state.json
+
+# terse-mode
+# Terse-mode UI preference — machine-local
+.pi/terse.json
+
+# tmux
+# tmux session registry, recovery metadata, pipe-pane transcripts — all machine-local
+.pi/tmux/
+
+# <<< pi state-files (auto-managed) <<<
