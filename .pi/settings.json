@@ -1,5 +1,6 @@
 {
   "packages": [
-    "git:github.com/dkmaker/pi-extension-project-management"
+    "git:github.com/dkmaker/pi-extension-project-management",
+    "/tmp/pi-pack/05c50449c69470c1"
   ]
 }
