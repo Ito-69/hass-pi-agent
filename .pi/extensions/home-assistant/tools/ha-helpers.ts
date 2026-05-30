@@ -11,9 +11,9 @@
  * The tool delegates to the correct storage backend based on the type's
  * storage_type in the registry. No storage logic lives in this file.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import {
   listTypes,
   getType,

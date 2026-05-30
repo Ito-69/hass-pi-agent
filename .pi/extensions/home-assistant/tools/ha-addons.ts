@@ -5,9 +5,9 @@
  * list, get, start/stop/restart, install/uninstall/update, logs, stats,
  * config management, and add-on store browsing.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { supervisorApi } from "../lib/supervisor.js";
 import { apiGet } from "../lib/api.js";
 import { renderMarkdownResult, renderToolCall } from "../lib/format.js";

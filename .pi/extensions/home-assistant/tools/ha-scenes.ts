@@ -4,9 +4,9 @@
  * Supports: list, get, create, update, delete, activate, snapshot.
  * Scenes store entity state snapshots and restore them on activation.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { wsCommand } from "../lib/ws.js";
 import { apiGet, apiPost, apiDelete } from "../lib/api.js";
 import type { HAState } from "../lib/types.js";

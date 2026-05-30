@@ -4,9 +4,9 @@
  * Queries aggregated statistics for sensors with state_class.
  * Uses recorder/statistics_during_period and recorder/list_statistic_ids.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { wsCommand } from "../lib/ws.js";
 import { parseRelativeTime , renderMarkdownResult, renderToolCall } from "../lib/format.js";
 

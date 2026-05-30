@@ -3,9 +3,9 @@
  *
  * Supports: get (view error log), list (structured log entries), set-level (per-integration log level).
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { apiGet, apiPost } from "../lib/api.js";
 import { wsCommand } from "../lib/ws.js";
 import { renderMarkdownResult, renderToolCall } from "../lib/format.js";

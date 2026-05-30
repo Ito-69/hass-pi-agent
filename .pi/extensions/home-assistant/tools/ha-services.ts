@@ -4,9 +4,9 @@
  * List, inspect, and call services via the HA REST API.
  * Service schemas (fields, targets, selectors) come directly from HA.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { apiGet, requireToken } from "../lib/api.js";
 import { HA_URL, HA_TOKEN } from "../lib/config.js";
 import { renderMarkdownResult, renderToolCall } from "../lib/format.js";

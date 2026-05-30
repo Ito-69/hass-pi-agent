@@ -5,9 +5,9 @@
  * Enriches with entity registry, area registry, and config entries
  * for full context (integration names, entity lists, area names).
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { wsCommand } from "../lib/ws.js";
 import { apiGet } from "../lib/api.js";
 import type { HAState } from "../lib/types.js";

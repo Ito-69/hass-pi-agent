@@ -16,9 +16,9 @@
  *   ../lib/schema.ts     — loadSchema (automation-elements.json)
  *   ../lib/validation.ts — validateElement, validateAutomationConfig
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 
 // Sub-module imports
 import { handleList, handleGet, handleCreate, handleUpdate, handleDelete, handleTrigger, handleEnableDisable } from "./ha-automations/crud.js";

@@ -11,7 +11,8 @@
     "systemprompt",
     "history",
     "wiki",
-    "typescript-architect"
+    "typescript-architect",
+    "pi-agent-expert"
   ],
   "disabled": [],
   "autoDeps": {},

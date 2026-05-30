@@ -4,9 +4,9 @@
  * List, inspect, disable/enable, reload, and remove config entries.
  * Uses REST API for config entries.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { apiGet, apiPost, apiDelete } from "../lib/api.js";
 import { timeSince , renderMarkdownResult, renderToolCall } from "../lib/format.js";
 

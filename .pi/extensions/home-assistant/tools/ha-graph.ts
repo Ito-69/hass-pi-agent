@@ -5,9 +5,9 @@
  * Parses YAML (with !include resolution) and .storage JSON files to find
  * every entity reference across automations, scripts, dashboards, helpers, etc.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { HA_CONFIG_PATH } from "../lib/config.js";
 import { buildGraph } from "../lib/graph/graph-builder.js";
 import { saveGraph, loadGraph } from "../lib/graph/cache.js";

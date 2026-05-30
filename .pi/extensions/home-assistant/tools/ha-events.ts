@@ -4,9 +4,9 @@
  * Subscribes to events for a limited duration and returns captured events.
  * Uses the subscribe_events WebSocket command.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { wsSubscribe } from "../lib/ws.js";
 import { renderMarkdownResult, renderToolCall } from "../lib/format.js";
 

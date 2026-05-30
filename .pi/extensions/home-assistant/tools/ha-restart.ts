@@ -9,9 +9,9 @@
  * - reload-domain: Reload a specific domain (automations, scripts, scenes, etc.)
  * - validate: Check configuration.yaml for errors
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { requireToken, callService, apiPost } from "../lib/api.js";
 import { renderMarkdownResult, renderToolCall } from "../lib/format.js";
 

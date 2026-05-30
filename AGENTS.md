@@ -52,7 +52,7 @@ First install: HA UI → Settings → Add-ons → Add-on Store → ⋮ Check for
 
 ## Extension Structure
 
-Tools live in `.pi/extensions/home-assistant/tools/ha-*.ts`, shared code in `lib/`. Registered in `index.ts`. See asset **"New Tool Implementation Pattern"** for conventions.
+Tools live in `.pi/extensions/home-assistant/tools/ha-*.ts`, shared code in `lib/`. Registered in `index.ts`. See the wiki page **"New Tool Implementation Pattern"** (https://wiki.dkmaker.xyz/pages/MSWTS8F5) for conventions — and the project index https://wiki.dkmaker.xyz/pages/MSWNJA34 for all architecture/pattern/policy docs.
 
 **Key principles:** <300 lines/file, shared types in `lib/types.ts`, complex tools get sub-directories, thin dispatch files.
 

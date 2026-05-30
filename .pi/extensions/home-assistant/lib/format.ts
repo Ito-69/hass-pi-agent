@@ -4,8 +4,8 @@
  * Common helpers used across multiple tools — time formatting,
  * slugification, element summarization, and TUI rendering.
  */
-import { Markdown, Text } from "@mariozechner/pi-tui";
-import { getMarkdownTheme } from "@mariozechner/pi-coding-agent";
+import { Markdown, Text } from "@earendil-works/pi-tui";
+import { getMarkdownTheme } from "@earendil-works/pi-coding-agent";
 
 /**
  * Shared renderResult for all HA tools — renders markdown output from execute().

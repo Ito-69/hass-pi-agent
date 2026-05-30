@@ -9,9 +9,9 @@
  * Questionnaire tool — interactive multi-question UI for guided setup wizards.
  * Adapted from pi-coding-agent examples/extensions/questionnaire.ts.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Editor, type EditorTheme, Key, matchesKey, Text, truncateToWidth } from "@mariozechner/pi-tui";
-import { Type } from "@sinclair/typebox";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Editor, type EditorTheme, Key, matchesKey, Text, truncateToWidth } from "@earendil-works/pi-tui";
+import { Type } from "@earendil-works/pi-ai";
 
 // Types
 interface QuestionOption {

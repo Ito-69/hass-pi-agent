@@ -5,9 +5,9 @@
  * Uses POST /api/template to render templates with access to all
  * current entity states, attributes, and HA template functions.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { requireToken } from "../lib/api.js";
 import { HA_URL, HA_TOKEN } from "../lib/config.js";
 import { renderMarkdownResult, renderToolCall } from "../lib/format.js";

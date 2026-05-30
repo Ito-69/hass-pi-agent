@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { registerHelperTool } from "./tools/ha-helpers.js";
 import { registerTemplateTool } from "./tools/ha-template.js";
 import { registerEntitiesTools } from "./tools/ha-entities.js";

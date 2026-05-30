@@ -4,9 +4,9 @@
  * Full CRUD for areas and floors via WebSocket API.
  * All changes take effect immediately.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { wsCommand } from "../lib/ws.js";
 import { renderMarkdownResult, renderToolCall } from "../lib/format.js";
 

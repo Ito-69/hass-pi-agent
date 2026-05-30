@@ -53,4 +53,8 @@ node_modules/
 # tmux session registry, recovery metadata, pipe-pane transcripts — all machine-local
 .pi/tmux/
 
+# transcript
+# Per-project pi session JSONL storage (when sessionDir=.pi/sessions) — machine-local activity log
+.pi/sessions/
+
 # <<< pi state-files (auto-managed) <<<

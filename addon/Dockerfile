@@ -1,4 +1,4 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:20.0.1
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:20.1.1
 
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
@@ -27,7 +27,7 @@ RUN apk add --no-cache \
     mosquitto-clients
 
 # Install pi coding agent (pinned version)
-RUN npm install -g @mariozechner/pi-coding-agent@0.57.1
+RUN npm install -g @earendil-works/pi-coding-agent@0.78.0
 
 # Copy HA extension into image
 COPY extensions/home-assistant /opt/ha-extension

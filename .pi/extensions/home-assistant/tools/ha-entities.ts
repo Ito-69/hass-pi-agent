@@ -4,9 +4,9 @@
  * Uses REST API for live state + WebSocket API for registry data.
  * Supports update (rename, move area, disable) and remove actions.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { apiGet } from "../lib/api.js";
 import { wsCommand } from "../lib/ws.js";
 import type { HAState } from "../lib/types.js";

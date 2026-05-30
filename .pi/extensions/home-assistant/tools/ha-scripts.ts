@@ -4,9 +4,9 @@
  * Supports: list, get, create, update, delete, run, traces, trace.
  * Scripts use `sequence` (not `actions`) and can have input `fields`.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { wsCommand } from "../lib/ws.js";
 import { apiGet, apiPost, apiDelete } from "../lib/api.js";
 import { timeSince, formatTrace, renderMarkdownResult, renderToolCall } from "../lib/format.js";

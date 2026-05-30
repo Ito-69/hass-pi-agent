@@ -4,9 +4,9 @@
  * Queries entity state history over a time range using the
  * history/history_during_period WebSocket command.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { wsCommand } from "../lib/ws.js";
 import { parseRelativeTime , renderMarkdownResult, renderToolCall } from "../lib/format.js";
 

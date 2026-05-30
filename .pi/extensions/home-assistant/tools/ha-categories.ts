@@ -4,9 +4,9 @@
  * CRUD for categories that organize automations, scripts, and scenes.
  * Uses WebSocket API.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { wsCommand } from "../lib/ws.js";
 import { renderMarkdownResult, renderToolCall } from "../lib/format.js";
 

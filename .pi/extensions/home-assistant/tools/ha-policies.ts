@@ -8,9 +8,9 @@
  * analysis to power the guided setup wizard conversation.
  * The `check` action audits entities against defined policies.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import {
   loadPolicies,
   savePolicies,

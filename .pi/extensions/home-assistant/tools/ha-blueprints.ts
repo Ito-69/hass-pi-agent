@@ -4,9 +4,9 @@
  * List, import, and delete blueprints for automations and scripts.
  * Uses WebSocket for list and REST API for import/delete.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { wsCommand } from "../lib/ws.js";
 import { apiPost, apiDelete } from "../lib/api.js";
 import { renderMarkdownResult, renderToolCall } from "../lib/format.js";

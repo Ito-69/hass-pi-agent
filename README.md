@@ -4,7 +4,7 @@
 
 AI coding agent with full Home Assistant access — manage automations, entities, dashboards, and more via natural language.
 
-Powered by [Pi](https://github.com/mariozechner/pi-coding-agent), an open-source coding agent that runs in your terminal.
+Powered by [Pi](https://github.com/earendil-works/pi), an open-source coding agent that runs in your terminal.
 
 ## Installation
 

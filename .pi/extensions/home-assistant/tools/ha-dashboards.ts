@@ -9,9 +9,9 @@
  * (e.g., type: "custom:mushroom-entity-card") and accept freeform config.
  * They work with all actions — no special handling needed.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { wsCommand } from "../lib/ws.js";
 import {
   fetchDashboardConfig,

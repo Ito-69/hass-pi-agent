@@ -1,5 +1,5 @@
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
 import { supportedDomains } from "../lib/registry.js";
 import { renderMarkdownResult, renderToolCall } from "../lib/format.js";
 

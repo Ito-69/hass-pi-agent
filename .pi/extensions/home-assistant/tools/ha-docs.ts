@@ -4,9 +4,9 @@
  * Pure local reader — all data is pre-fetched by update-docs.py.
  * No GitHub calls at runtime.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { renderMarkdownResult, renderToolCall } from "../lib/format.js";
 
 export function registerDocsTool(pi: ExtensionAPI): void {

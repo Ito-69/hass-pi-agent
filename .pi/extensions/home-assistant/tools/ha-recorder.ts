@@ -4,9 +4,9 @@
  * Statistics adjustment, unit changes, clearing, and database purge.
  * Uses WebSocket API for recorder commands.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { wsCommand } from "../lib/ws.js";
 import { apiPost } from "../lib/api.js";
 import { renderMarkdownResult, renderToolCall } from "../lib/format.js";

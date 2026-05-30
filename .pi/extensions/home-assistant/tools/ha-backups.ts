@@ -3,9 +3,9 @@
  *
  * Create, list, restore, and delete HA backups via the Supervisor API.
  */
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@mariozechner/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
 import { supervisorApi } from "../lib/supervisor.js";
 import { renderMarkdownResult, renderToolCall } from "../lib/format.js";
 
