@@ -120,12 +120,13 @@ function supervisorRequest(path) {
 /** Gather stable, structural HA context (no transient state) */
 async function gatherContext() {
   try {
-    const [states, supInfo, osInfo, hostInfo, addonsInfo] = await Promise.allSettled([
+    const [states, supInfo, osInfo, hostInfo, addonsInfo, coreConfig] = await Promise.allSettled([
       supervisorRequest("/core/api/states"),
       supervisorRequest("/supervisor/info"),
       supervisorRequest("/os/info"),
       supervisorRequest("/host/info"),
       supervisorRequest("/addons"),
+      supervisorRequest("/core/info"),
     ]);
 
     // Domain counts from states (structural — not individual values)
@@ -143,6 +144,7 @@ async function gatherContext() {
     const os = osInfo.status === "fulfilled" ? osInfo.value : {};
     const host = hostInfo.status === "fulfilled" ? hostInfo.value : {};
     const addons = addonsInfo.status === "fulfilled" ? addonsInfo.value : {};
+    const core = coreConfig.status === "fulfilled" ? coreConfig.value : {};
 
     // Installed add-ons
     const installedAddons = (addons.addons || [])
@@ -153,20 +155,13 @@ async function gatherContext() {
         running: a.state === "started",
       }));
 
-    // Areas via Core API
+    // Areas supplemented by the extension (needs WS); not available here.
     let areas = [];
-    try {
-      // Use WebSocket-style via REST isn't available, use template endpoint
-      const areaStates = Array.isArray(allStates) ? allStates : [];
-      // We can't easily get areas without WS, so we'll try the REST API
-      const areaData = await supervisorRequest("/core/api/config");
-      // areas aren't in config API — skip for now, extension can supplement
-    } catch {}
 
     cachedContext = {
       system: {
         hostname: host.hostname || "unknown",
-        ha_version: sup.homeassistant || "unknown",
+        ha_version: core.version || sup.homeassistant || "unknown",
         os_version: os.version || "unknown",
         supervisor_version: sup.version || "unknown",
         arch: sup.arch || "unknown",

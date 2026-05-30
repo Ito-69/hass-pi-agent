@@ -97,12 +97,13 @@ export async function gatherContext(): Promise<HAContext | null> {
   try {
     if (!HA_TOKEN) return null;
 
-    const [states, supInfo, osInfo, hostInfo, addonsInfo] = await Promise.allSettled([
+    const [states, supInfo, osInfo, hostInfo, addonsInfo, coreConfig] = await Promise.allSettled([
       apiGet<HAState[]>("/api/states"),
       supervisorApi<Record<string, unknown>>("/supervisor/info"),
       supervisorApi<Record<string, unknown>>("/os/info"),
       supervisorApi<Record<string, unknown>>("/host/info"),
       supervisorApi<{ addons: any[] }>("/addons"),
+      supervisorApi<Record<string, unknown>>("/core/info"),
     ]);
 
     const allStates = states.status === "fulfilled" ? states.value : [];
@@ -116,6 +117,7 @@ export async function gatherContext(): Promise<HAContext | null> {
     const os: any = osInfo.status === "fulfilled" ? osInfo.value : {};
     const host: any = hostInfo.status === "fulfilled" ? hostInfo.value : {};
     const addons: any = addonsInfo.status === "fulfilled" ? addonsInfo.value : {};
+    const core: any = coreConfig.status === "fulfilled" ? coreConfig.value : {};
 
     const installedAddons = (addons.addons || [])
       .filter((a: any) => a.installed)
@@ -137,7 +139,7 @@ export async function gatherContext(): Promise<HAContext | null> {
     cachedContext = {
       system: {
         hostname: host.hostname || "unknown",
-        ha_version: sup.homeassistant || "unknown",
+        ha_version: core.version || sup.homeassistant || "unknown",
         os_version: os.version || "unknown",
         supervisor_version: sup.version || "unknown",
         arch: sup.arch || "unknown",
