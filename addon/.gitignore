@@ -1,1 +1,2 @@
-extensions/home-assistant/
+extensions/home-assistant/node_modules/
+extensions/home-assistant/data/

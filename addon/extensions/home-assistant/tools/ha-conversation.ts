@@ -1,0 +1,131 @@
+/**
+ * Home Assistant conversation/assist tool.
+ *
+ * Process natural language text and list conversation agents.
+ * Uses WebSocket API.
+ */
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "@earendil-works/pi-ai";
+import { StringEnum } from "@earendil-works/pi-ai";
+import { wsCommand } from "../lib/ws.js";
+import { renderMarkdownResult, renderToolCall } from "../lib/format.js";
+
+// ── Types ────────────────────────────────────────────────────
+
+interface ConversationResult {
+  response: {
+    response_type: string;
+    speech: { plain: { speech: string } };
+    card?: Record<string, unknown>;
+    data?: { targets?: unknown[]; success?: unknown[]; failed?: unknown[] };
+  };
+  conversation_id: string | null;
+}
+
+interface ConversationAgent {
+  id: string;
+  name: string;
+}
+
+// ── Tool registration ────────────────────────────────────────
+
+export function registerConversationTool(pi: ExtensionAPI): void {
+  pi.registerTool({
+    name: "ha_conversation",
+    label: "HA Conversation",
+    description: `Interact with HA conversation/assist system. Actions: process, agents. Use ha_tool_docs('ha_conversation') for full usage.`,
+
+    parameters: Type.Object({
+      action: StringEnum(["process", "agents"] as const, {
+        description: "Action to perform",
+      }),
+      text: Type.Optional(
+        Type.String({ description: "Text to process (for process action)" })
+      ),
+      agent_id: Type.Optional(
+        Type.String({ description: "Conversation agent ID (default: homeassistant)" })
+      ),
+      language: Type.Optional(
+        Type.String({ description: "Language code (e.g., en, nl)" })
+      ),
+      conversation_id: Type.Optional(
+        Type.String({ description: "Continue an existing conversation" })
+      ),
+    }),
+
+
+    renderCall(args: Record<string, unknown>, theme: any) {
+      return renderToolCall("HA Conversation", args, theme);
+    },
+
+    renderResult(result: any) {
+      return renderMarkdownResult(result);
+    },
+
+    async execute(toolCallId, params, signal, onUpdate, ctx) {
+      const result = await executeAction(params);
+      return { content: [{ type: "text" as const, text: result }] };
+    },
+  });
+}
+
+// ── Action dispatch ──────────────────────────────────────────
+
+async function executeAction(params: Record<string, unknown>): Promise<string> {
+  switch (params.action as string) {
+    case "process": return handleProcess(params);
+    case "agents": return handleAgents();
+    default: throw new Error(`Unknown action '${params.action}'`);
+  }
+}
+
+// ── Handlers ─────────────────────────────────────────────────
+
+async function handleProcess(params: Record<string, unknown>): Promise<string> {
+  const text = params.text as string | undefined;
+  if (!text) throw new Error("'text' is required for process");
+
+  const data: Record<string, unknown> = { text };
+  if (params.agent_id) data.agent_id = params.agent_id;
+  if (params.language) data.language = params.language;
+  if (params.conversation_id) data.conversation_id = params.conversation_id;
+
+  const result = await wsCommand<ConversationResult>("conversation/process", data);
+  const speech = result.response?.speech?.plain?.speech ?? "(no response)";
+  const type = result.response?.response_type ?? "unknown";
+
+  const rows: string[] = [
+    "| Property | Value |",
+    "|----------|-------|",
+    `| Response | ${speech} |`,
+    `| Type | ${type} |`,
+  ];
+
+  if (result.conversation_id) {
+    rows.push(`| Conversation ID | ${result.conversation_id} |`);
+  }
+
+  const respData = result.response?.data;
+  if (respData?.targets && Array.isArray(respData.targets) && respData.targets.length > 0) {
+    rows.push(`| Targets | ${JSON.stringify(respData.targets)} |`);
+  }
+  if (respData?.failed && Array.isArray(respData.failed) && respData.failed.length > 0) {
+    rows.push(`| Failed | ${JSON.stringify(respData.failed)} |`);
+  }
+
+  return rows.join("\n");
+}
+
+async function handleAgents(): Promise<string> {
+  const result = await wsCommand<{ agents: ConversationAgent[] }>("conversation/agent/list");
+  const agents = result.agents ?? [];
+  if (agents.length === 0) return "No conversation agents available.";
+
+  const lines: string[] = [
+    "| Name | ID |",
+    "|------|----|",
+    ...agents.map((a) => `| **${a.name}** | ${a.id} |`),
+    `\n${agents.length} agents`,
+  ];
+  return lines.join("\n");
+}
