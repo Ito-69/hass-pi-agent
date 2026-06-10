@@ -58,6 +58,20 @@ if bashio::var.has_value "${service_model}"; then
     echo "export PI_SERVICE_MODEL=\"${service_model}\"" >> /etc/profile.d/pi-agent.sh
 fi
 
+# --- OpenAI API Base (for llama.cpp or custom OpenAI endpoint) ---
+openai_api_base=$(bashio::config 'openai_api_base')
+if bashio::var.has_value "${openai_api_base}"; then
+    printf '%s' "${openai_api_base}" > /var/run/s6/container_environment/OPENAI_API_BASE
+    printf '%s' "${openai_api_base}" > /var/run/s6/container_environment/OPENAI_BASE_URL
+    echo "export OPENAI_API_BASE=\"${openai_api_base}\"" >> /etc/profile.d/pi-agent.sh
+    echo "export OPENAI_BASE_URL=\"${openai_api_base}\"" >> /etc/profile.d/pi-agent.sh
+    # Inject a dummy key if none exists, to satisfy the agent client schema
+    if [[ ! -f /var/run/s6/container_environment/OPENAI_API_KEY ]]; then
+        printf '%s' "dummy" > /var/run/s6/container_environment/OPENAI_API_KEY
+        echo "export OPENAI_API_KEY=\"dummy\"" >> /etc/profile.d/pi-agent.sh
+    fi
+fi
+
 # --- User-defined environment variables (API keys, provider config, etc.) ---
 if bashio::config.has_value 'environment'; then
     env_count=$(bashio::config 'environment | length')
@@ -73,17 +87,79 @@ if bashio::config.has_value 'environment'; then
     done
 fi
 
+# --- Symlink ~/.pi to persistent /data/pi-agent ---
+mkdir -p "${PI_DIR}"
+ln -sfn "${PI_DIR}" /root/.pi
+
+# --- Generate models.json for custom/local providers ---
+python3 -c '
+import json, os
+models_path = "/data/pi-agent/agent/models.json"
+os.makedirs(os.path.dirname(models_path), exist_ok=True)
+try:
+    with open(models_path, "r") as f:
+        data = json.load(f)
+except Exception:
+    data = {}
+if "providers" not in data:
+    data["providers"] = {}
+
+# Read environment keys
+opencode_key = os.environ.get("OPENCODE_ZEN_API_KEY", "")
+minimax_key = os.environ.get("MINIMAX_API_KEY", "")
+omniroute_key = os.environ.get("OMNIROUTE_API_KEY", "")
+openai_base = os.environ.get("OPENAI_API_BASE", "")
+default_model = os.environ.get("PI_DEFAULT_MODEL", "")
+service_model = os.environ.get("PI_SERVICE_MODEL", "")
+
+models_list = []
+for m in [default_model, service_model]:
+    if m and m.strip():
+        models_list.append({"id": m.strip()})
+
+if opencode_key:
+    data["providers"]["opencode-zen"] = {
+        "baseUrl": "https://opencode.ai/zen/v1",
+        "api": "openai-completions",
+        "apiKey": opencode_key,
+        "models": models_list + [{"id": "opencode-zen"}]
+    }
+if minimax_key:
+    data["providers"]["minimax"] = {
+        "baseUrl": "https://api.minimax.io/v1",
+        "api": "openai-completions",
+        "apiKey": minimax_key,
+        "models": models_list + [{"id": "MiniMax-M3"}, {"id": "MiniMax-M2.7"}, {"id": "minimax"}]
+    }
+if omniroute_key:
+    data["providers"]["omniroute"] = {
+        "baseUrl": "https://omniroute.inuar.uk/v1",
+        "api": "openai-completions",
+        "apiKey": omniroute_key,
+        "models": models_list + [{"id": "omniroute"}]
+    }
+if openai_base:
+    data["providers"]["llama-cpp"] = {
+        "baseUrl": openai_base,
+        "api": "openai-completions",
+        "apiKey": "dummy",
+        "models": models_list + [{"id": "llama-cpp"}]
+    }
+with open(models_path, "w") as f:
+    json.dump(data, f, indent=2)
+'
+
 # --- Persistent bash history ---
 touch /data/.bash_history
 ln -sf /data/.bash_history /root/.bash_history
 
-# --- Pi settings: disable changelog popup, quiet startup ---
+# --- Pi settings: disable changelog popup, quiet startup, and enable extensions ---
 PI_SETTINGS="${PI_DIR}/settings.json"
 if [[ ! -f "${PI_SETTINGS}" ]]; then
     echo '{}' > "${PI_SETTINGS}"
 fi
 tmp=$(mktemp)
-jq '. + {"quietStartup": true, "collapseChangelog": true}' "${PI_SETTINGS}" > "$tmp" && mv "$tmp" "${PI_SETTINGS}"
+jq '. + {"quietStartup": true, "collapseChangelog": true} | .packages = ((.packages // []) + ["npm:context-mode", "npm:pi-web-access"] | unique)' "${PI_SETTINGS}" > "$tmp" && mv "$tmp" "${PI_SETTINGS}"
 
 # --- Clean up legacy extension copy from /homeassistant volume ---
 if [[ -d /homeassistant/.pi/extensions/home-assistant ]]; then

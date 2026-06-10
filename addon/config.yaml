@@ -1,17 +1,17 @@
-name: Pi Agent for Home Assistant
+name: HASS AI Assistant
 version: 0.10.2
-slug: pi_agent
-image: ghcr.io/dkmaker/hass-pi-agent/{arch}-pi_agent
+slug: hass_ai_assistant
+image: ghcr.io/ito-69/hass-pi-agent/{arch}-hass_ai_assistant
 description: >-
-  AI coding agent with full Home Assistant access — manage automations,
+  Local and Cloud AI Assistant with full Home Assistant access — manage automations,
   entities, dashboards, and more via natural language.
 startup: services
 ingress: true
 ingress_port: 0
 ingress_stream: true
 init: false
-panel_icon: mdi:robot
-panel_title: Pi Agent
+panel_icon: mdi:brain
+panel_title: AI Assistant
 arch:
   - aarch64
   - amd64
@@ -27,20 +27,23 @@ map:
   - media:rw
   - backup:rw
 options:
-  default_provider: anthropic
+  default_provider: openai
   default_model: ''
+  openai_api_base: ''
   install_integration: true
   environment: []
   additional_packages: []
 schema:
   default_provider: >-
-    list(anthropic|openai|google|openrouter|groq|xai|mistral|cerebras|huggingface|github-copilot|amazon-bedrock|google-vertex|azure-openai-responses)
+    list(anthropic|openai|google|openrouter|groq|xai|mistral|cerebras|huggingface|github-copilot|amazon-bedrock|google-vertex|azure-openai-responses|opencode-zen|minimax|omniroute)
   default_model: str?
+  openai_api_base: str?
   install_integration: bool?
   service_provider: >-
-    list(anthropic|openai|google|openrouter|groq|xai|mistral|cerebras|huggingface|github-copilot|amazon-bedrock|google-vertex|azure-openai-responses)?
+    list(anthropic|openai|google|openrouter|groq|xai|mistral|cerebras|huggingface|github-copilot|amazon-bedrock|google-vertex|azure-openai-responses|opencode-zen|minimax|omniroute)?
   service_model: str?
   environment:
     - str
   additional_packages:
     - str
+

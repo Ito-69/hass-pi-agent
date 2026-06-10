@@ -189,7 +189,7 @@ setTimeout(() => {
   setInterval(gatherContext, CONTEXT_REFRESH_MS);
 }, 5000);
 
-function spawnPi(question, overrides = {}) {
+function spawnPi(question, overrides = {}, onComplete = null) {
   activeProcesses++;
 
   const args = ["--print", "--extension", "/opt/ha-extension"];
@@ -224,7 +224,7 @@ function spawnPi(question, overrides = {}) {
   console.log(`[pi-service] Spawning Pi (active: ${activeProcesses})`);
 
   // Log the question to the logbook
-  fireLogbookEntry("Pi Agent", `asked: ${question}`);
+  fireLogbookEntry("AI Assistant", `asked: ${question}`);
 
   const pi = spawn("pi", args, {
     cwd: "/homeassistant",
@@ -249,20 +249,29 @@ function spawnPi(question, overrides = {}) {
     if (code === 0) {
       console.log(`[pi-service] Pi completed successfully (active: ${activeProcesses})`);
       fireLogbookEntry(
-        "Pi Agent",
+        "AI Assistant",
         truncated ? `responded: ${truncated}` : "completed (no output)"
       );
+      if (onComplete) {
+        onComplete(null, response);
+      }
     } else {
       console.error(`[pi-service] Pi exited with code ${code} (active: ${activeProcesses})`);
       const errMsg = stderr.trim().slice(0, 500);
-      fireLogbookEntry("Pi Agent", `failed (exit ${code}): ${errMsg || "unknown error"}`);
+      fireLogbookEntry("AI Assistant", `failed (exit ${code}): ${errMsg || "unknown error"}`);
+      if (onComplete) {
+        onComplete(new Error(errMsg || `Exit code ${code}`));
+      }
     }
   });
 
   pi.on("error", (err) => {
     activeProcesses--;
     console.error(`[pi-service] Failed to spawn Pi: ${err.message}`);
-    fireLogbookEntry("Pi Agent", `error: ${err.message}`);
+    fireLogbookEntry("AI Assistant", `error: ${err.message}`);
+    if (onComplete) {
+      onComplete(err);
+    }
   });
 }
 
@@ -272,7 +281,7 @@ const server = http.createServer((req, res) => {
     req.on("data", (chunk) => (body += chunk));
     req.on("end", () => {
       try {
-        const { question, provider, model } = JSON.parse(body);
+        const { question, provider, model, sync } = JSON.parse(body);
         if (!question || typeof question !== "string") {
           res.writeHead(400, { "Content-Type": "application/json" });
           res.end(JSON.stringify({ error: "Missing 'question' field" }));
@@ -285,9 +294,21 @@ const server = http.createServer((req, res) => {
           return;
         }
 
-        spawnPi(question, { provider, model });
-        res.writeHead(202, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ status: "accepted" }));
+        if (sync) {
+          spawnPi(question, { provider, model }, (err, response) => {
+            if (err) {
+              res.writeHead(500, { "Content-Type": "application/json" });
+              res.end(JSON.stringify({ error: err.message }));
+            } else {
+              res.writeHead(200, { "Content-Type": "application/json" });
+              res.end(JSON.stringify({ response: response }));
+            }
+          });
+        } else {
+          spawnPi(question, { provider, model });
+          res.writeHead(202, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ status: "accepted" }));
+        }
       } catch (err) {
         res.writeHead(400, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ error: "Invalid JSON" }));

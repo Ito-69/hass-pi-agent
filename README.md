@@ -1,10 +1,10 @@
-# Pi Agent for Home Assistant
+# HASS AI Assistant
 
-[![Build](https://github.com/dkmaker/hass-pi-agent/actions/workflows/build.yaml/badge.svg)](https://github.com/dkmaker/hass-pi-agent/actions/workflows/build.yaml)
+[![Build](https://github.com/Ito-69/hass-pi-agent/actions/workflows/build.yaml/badge.svg)](https://github.com/Ito-69/hass-pi-agent/actions/workflows/build.yaml)
 
-AI coding agent with full Home Assistant access — manage automations, entities, dashboards, and more via natural language.
+Local and Cloud AI Assistant with full Home Assistant access — manage automations, entities, dashboards, and more via natural language.
 
-Powered by [Pi](https://github.com/earendil-works/pi), an open-source coding agent that runs in your terminal.
+Powered by [Pi](https://github.com/earendil-works/pi) coding agent with pre-loaded extensions for advanced context management (`context-mode`) and web navigation (`pi-web-access`).
 
 ## Installation
 
@@ -15,25 +15,22 @@ Powered by [Pi](https://github.com/earendil-works/pi), an open-source coding age
 3. Click the **⋮** menu (top right) → **Repositories**
 4. Add this URL:
    ```
-   https://github.com/dkmaker/hass-pi-agent
+   https://github.com/Ito-69/hass-pi-agent
    ```
 5. Click **Add → Close**
 
 ### 2. Install the add-on
 
-1. Find **Pi Agent for Home Assistant** in the add-on store (refresh if needed)
+1. Find **HASS AI Assistant** in the add-on store (refresh if needed)
 2. Click **Install**
 3. Go to the **Configuration** tab
-4. Add your AI provider API key under **Environment**, e.g.:
-   ```
-   ANTHROPIC_API_KEY=sk-ant-...
-   ```
+4. Add your AI provider API key under **Environment**, or fill in your local LLM address.
 5. Click **Save**
 6. Go to the **Info** tab and click **Start**
 
-### 3. Open the agent
+### 3. Open the assistant
 
-Click **Pi Agent** in the sidebar, or go to the **Info** tab and click **Open Web UI**.
+Click **AI Assistant** in the sidebar, or go to the **Info** tab and click **Open Web UI**.
 
 ## Configuration
 
@@ -41,7 +38,13 @@ Click **Pi Agent** in the sidebar, or go to the **Info** tab and click **Open We
 
 Select your AI provider from the **Default Provider** dropdown:
 
-Anthropic · OpenAI · Google · OpenRouter · Groq · xAI · Mistral · Cerebras · Hugging Face · GitHub Copilot · Amazon Bedrock · Google Vertex · Azure OpenAI
+Anthropic · OpenAI · Google · OpenRouter · Groq · xAI · Mistral · Cerebras · Hugging Face · GitHub Copilot · Amazon Bedrock · Google Vertex · Azure OpenAI · OpenCode-Zen · MiniMax · Omniroute
+
+### Local LLM (llama.cpp)
+To use a local `llama.cpp` server (e.g. running on your host VM or network):
+1. Select `openai` as the **Default Provider**.
+2. Put your llama.cpp base URL (e.g., `http://192.168.68.50:8080/v1`) into the **openai_api_base** field.
+3. Put your active model name (e.g., `Qwen3.6-35B-A3B-UD-Q5_K_M`) into the **Default Model** field.
 
 ### API Keys
 
@@ -59,6 +62,9 @@ Add your provider's API key as an environment variable in the **Environment** li
 | Cerebras | `CEREBRAS_API_KEY=...` |
 | Hugging Face | `HF_TOKEN=hf_...` |
 | GitHub Copilot | `GITHUB_TOKEN=gho_...` |
+| OpenCode-Zen | `OPENCODE_ZEN_API_KEY=...` |
+| MiniMax | `MINIMAX_API_KEY=...` |
+| Omniroute | `OMNIROUTE_API_KEY=...` |
 | Amazon Bedrock | `AWS_ACCESS_KEY_ID=...` + `AWS_SECRET_ACCESS_KEY=...` + `AWS_REGION=us-east-1` |
 
 ### Model
@@ -67,6 +73,7 @@ Optionally set a **Default Model** — accepts any model ID or fuzzy pattern:
 
 - `anthropic/claude-sonnet-4-20250514`
 - `openai/gpt-4o`
+- `Qwen3.6-35B-A3B-UD-Q5_K_M`
 - `*sonnet*` (fuzzy match)
 
 Leave empty to use the provider's default.
@@ -77,7 +84,7 @@ Install extra Alpine Linux packages at startup (e.g., `jq`, `imagemagick`).
 
 ## What can it do?
 
-Pi Agent has full access to your Home Assistant instance:
+HASS AI Assistant has full access to your Home Assistant instance:
 
 - **Automations** — create, edit, debug, and manage automations
 - **Entities & Devices** — inspect states, rename, organize into areas
@@ -89,6 +96,7 @@ Pi Agent has full access to your Home Assistant instance:
 - **Templates** — render and test Jinja2 templates
 - **Backups** — create and manage backups
 - **System** — view system info, restart, and reload configuration
+- **Web Navigation** — access the web, clone Git repos, fetch docs (powered by `pi-web-access`)
 
 ## Supported architectures
 

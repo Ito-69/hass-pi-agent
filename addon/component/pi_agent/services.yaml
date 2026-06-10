@@ -1,10 +1,10 @@
 ask:
-  name: Ask Pi Agent
-  description: Send a question to the Pi Agent for processing. Pi will act on it — results appear as state changes and service calls in the logbook.
+  name: Ask HASS AI Assistant
+  description: Send a question to the HASS AI Assistant. It will act on it — results appear as state changes and service calls in the logbook (and optionally return responses).
   fields:
     question:
       name: Question
-      description: The question or instruction for the Pi Agent.
+      description: The question or instruction for the AI Assistant.
       required: true
       example: "Turn off all lights in the living room"
       selector:
@@ -23,6 +23,9 @@ ask:
             - groq
             - xai
             - mistral
+            - opencode-zen
+            - minimax
+            - omniroute
           custom_value: true
     model:
       name: Model

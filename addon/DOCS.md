@@ -1,6 +1,6 @@
-# Pi Agent for Home Assistant
+# HASS AI Assistant
 
-AI coding agent with full Home Assistant access — manage automations, entities, dashboards, and more via natural language.
+Local and Cloud AI Assistant with full Home Assistant access — manage automations, entities, dashboards, and more via natural language.
 
 ## Configuration
 
@@ -8,16 +8,40 @@ AI coding agent with full Home Assistant access — manage automations, entities
 
 Select the AI provider to use by default.
 
+Supported providers:
+- `anthropic` (Claude)
+- `openai` (GPT models, or local servers like `llama.cpp`)
+- `google` (Gemini)
+- `openrouter` (OpenRouter API)
+- `groq` (Groq API)
+- `xai` (Grok)
+- `mistral` (Mistral API)
+- `cerebras` (Cerebras API)
+- `huggingface` (Hugging Face API)
+- `github-copilot` (Copilot API)
+- `amazon-bedrock` (AWS Bedrock)
+- `azure-openai-responses` (Azure OpenAI)
+- `opencode-zen` (OpenCode Zen API)
+- `minimax` (MiniMax API)
+- `omniroute` (Omniroute API)
+
 ### Default Model
 
-Optionally set a default model. Accepts any model pattern or ID supported by pi, for example:
+Optionally set a default model. Accepts any model pattern or ID supported by Pi, for example:
 
 - `anthropic/claude-sonnet-4-20250514`
 - `openai/gpt-4o`
+- `Qwen3.6-35B-A3B-UD-Q5_K_M`
 - `google/gemini-2.5-pro`
 - `*sonnet*` (fuzzy match)
 
 Leave empty to use the provider's default model.
+
+### Local LLM (llama.cpp)
+To use a local `llama.cpp` server (e.g. running on your network or host):
+1. Select `openai` as the **Default Provider**.
+2. Put your llama.cpp base URL (e.g., `http://192.168.68.50:8080/v1`) into the **openai_api_base** field.
+3. Put your active model name (e.g., `Qwen3.6-35B-A3B-UD-Q5_K_M`) into the **Default Model** field.
 
 ### Environment
 
@@ -40,6 +64,9 @@ Add your provider's API key as an environment variable:
 | Hugging Face | `HF_TOKEN=hf_...` |
 | Azure OpenAI | `AZURE_OPENAI_API_KEY=...` |
 | GitHub Copilot | `GITHUB_TOKEN=gho_...` |
+| OpenCode-Zen | `OPENCODE_ZEN_API_KEY=...` |
+| MiniMax | `MINIMAX_API_KEY=...` |
+| Omniroute | `OMNIROUTE_API_KEY=...` |
 | Amazon Bedrock | `AWS_ACCESS_KEY_ID=...` |
 | | `AWS_SECRET_ACCESS_KEY=...` |
 | | `AWS_REGION=us-east-1` |

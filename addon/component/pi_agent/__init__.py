@@ -1,10 +1,10 @@
-"""Pi Agent integration — registers pi_agent.ask service."""
+"""HASS AI Assistant integration — registers pi_agent.ask service."""
 import logging
 
 import aiohttp
 import voluptuous as vol
 
-from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
@@ -27,10 +27,10 @@ SERVICE_SCHEMA = vol.Schema(
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Set up Pi Agent integration."""
+    """Set up HASS AI Assistant integration."""
 
-    async def handle_ask(call: ServiceCall) -> None:
-        """Handle pi_agent.ask service call — fire and forget."""
+    async def handle_ask(call: ServiceCall) -> ServiceResponse:
+        """Handle pi_agent.ask service call — returns response if expected."""
         question = call.data["question"]
         provider = call.data.get("provider")
         model = call.data.get("model")
@@ -42,29 +42,44 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         if model:
             payload["model"] = model
 
+        # Check if the service call expects response data
+        return_response = getattr(call, "return_response", False)
+        if return_response:
+            payload["sync"] = True
+            timeout_seconds = 90
+        else:
+            timeout_seconds = 10
+
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.post(
                     url,
                     json=payload,
-                    timeout=aiohttp.ClientTimeout(total=10),
+                    timeout=aiohttp.ClientTimeout(total=timeout_seconds),
                 ) as resp:
-                    if resp.status == 202:
-                        _LOGGER.info("Pi Agent accepted question")
+                    if resp.status == 200 and return_response:
+                        result = await resp.json()
+                        return result
+                    elif resp.status == 202:
+                        _LOGGER.info("HASS AI Assistant accepted question")
+                        return {"status": "accepted"}
                     else:
                         error = await resp.text()
                         _LOGGER.error(
-                            "Pi Agent error (%s): %s", resp.status, error
+                            "HASS AI Assistant error (%s): %s", resp.status, error
                         )
+                        return {"status": "error", "error": error}
         except aiohttp.ClientError as err:
-            _LOGGER.error("Pi Agent connection error: %s", err)
+            _LOGGER.error("HASS AI Assistant connection error: %s", err)
+            return {"status": "error", "error": str(err)}
 
     hass.services.async_register(
         DOMAIN,
         SERVICE_ASK,
         handle_ask,
         schema=SERVICE_SCHEMA,
+        supports_response=SupportsResponse.OPTIONAL,
     )
 
-    _LOGGER.info("Pi Agent service registered")
+    _LOGGER.info("HASS AI Assistant service registered")
     return True
