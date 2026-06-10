@@ -117,6 +117,30 @@ except Exception:
 if "providers" not in data:
     data["providers"] = {}
 
+def fetch_models(base_url, api_key):
+    if not base_url or not api_key:
+        return []
+    import urllib.request
+    try:
+        url = base_url + "/models" if not base_url.endswith("/") else base_url + "models"
+        req = urllib.request.Request(url, headers={"Authorization": f"Bearer {api_key}"})
+        with urllib.request.urlopen(req, timeout=3) as response:
+            res_data = json.loads(response.read().decode())
+            if "data" in res_data:
+                return [{"id": m["id"]} for m in res_data["data"] if "id" in m]
+    except Exception as e:
+        print(f"Failed to fetch models from {base_url}: {e}")
+    return []
+
+def get_unique(models):
+    seen = set()
+    unique = []
+    for m in models:
+        if m["id"] not in seen:
+            seen.add(m["id"])
+            unique.append(m)
+    return unique
+
 # Read environment keys
 opencode_key = os.environ.get("OPENCODE_ZEN_API_KEY", "")
 minimax_key = os.environ.get("MINIMAX_API_KEY", "")
@@ -131,53 +155,36 @@ for m in [default_model, service_model]:
         models_list.append({"id": m.strip()})
 
 if opencode_key:
+    discovered = fetch_models("https://opencode.ai/zen/v1", opencode_key)
     data["providers"]["opencode-zen"] = {
         "baseUrl": "https://opencode.ai/zen/v1",
         "api": "openai-completions",
         "apiKey": opencode_key,
-        "models": models_list + [{"id": "opencode-zen"}]
+        "models": get_unique(models_list + discovered + [{"id": "opencode-zen"}])
     }
 if minimax_key:
+    discovered = fetch_models("https://api.minimax.io/v1", minimax_key)
     data["providers"]["minimax"] = {
         "baseUrl": "https://api.minimax.io/v1",
         "api": "openai-completions",
         "apiKey": minimax_key,
-        "models": models_list + [{"id": "MiniMax-M3"}, {"id": "MiniMax-M2.7"}, {"id": "minimax"}]
+        "models": get_unique(models_list + discovered + [{"id": "MiniMax-M3"}, {"id": "MiniMax-M2.7"}, {"id": "minimax"}])
     }
 if omniroute_key:
+    discovered = fetch_models("https://omniroute.inuar.uk/v1", omniroute_key)
     data["providers"]["omniroute"] = {
         "baseUrl": "https://omniroute.inuar.uk/v1",
         "api": "openai-completions",
         "apiKey": omniroute_key,
-        "models": models_list + [{"id": "omniroute"}]
+        "models": get_unique(models_list + discovered + [{"id": "omniroute"}])
     }
 if openai_base:
-    llama_models = [{"id": "llama-cpp"}]
-    import urllib.request
-    try:
-        url = openai_base + "/models" if not openai_base.endswith("/") else openai_base + "models"
-        req = urllib.request.Request(url, headers={"Authorization": "Bearer dummy"})
-        with urllib.request.urlopen(req, timeout=3) as response:
-            res_data = json.loads(response.read().decode())
-            if "data" in res_data:
-                for m in res_data["data"]:
-                    if "id" in m:
-                        llama_models.append({"id": m["id"]})
-    except Exception as e:
-        print(f"Failed to auto-discover local LLM models: {e}")
-    
-    seen = set()
-    unique_models = []
-    for m in models_list + llama_models:
-        if m["id"] not in seen:
-            seen.add(m["id"])
-            unique_models.append(m)
-
+    discovered = fetch_models(openai_base, "dummy")
     data["providers"]["llama-cpp"] = {
         "baseUrl": openai_base,
         "api": "openai-completions",
         "apiKey": "dummy",
-        "models": unique_models
+        "models": get_unique(models_list + discovered + [{"id": "llama-cpp"}])
     }
 with open(models_path, "w") as f:
     json.dump(data, f, indent=2)
