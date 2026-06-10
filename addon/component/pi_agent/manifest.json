@@ -1,7 +1,7 @@
 {
   "domain": "pi_agent",
   "name": "HASS AI Assistant",
-  "version": "0.10.3",
+  "version": "0.10.4",
   "documentation": "https://github.com/Ito-69/hass-pi-agent",
   "codeowners": ["@Ito-69"],
   "dependencies": [],

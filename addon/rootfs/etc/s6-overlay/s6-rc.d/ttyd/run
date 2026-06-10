@@ -29,5 +29,5 @@ options+=(-p "${ingress_port}")
 # Change working directory
 cd /homeassistant || cd /root || bashio::exit.nok 'Unable to change working directory'
 
-# Run ttyd with tmux for session persistence
-exec ttyd "${options[@]}" tmux -u new -A -s pi /usr/bin/pi-entrypoint.sh
+# Run ttyd with tmux for session persistence and DOM renderer to prevent character rendering glitches
+exec ttyd "${options[@]}" -t rendererType=dom tmux -u new -A -s pi /usr/bin/pi-entrypoint.sh
