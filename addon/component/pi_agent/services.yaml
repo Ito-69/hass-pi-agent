@@ -32,3 +32,14 @@ ask:
       description: Override the AI model for this call (uses add-on default if not set).
       selector:
         text:
+    timeout:
+      name: Timeout
+      description: Maximum time to wait for the response in seconds.
+      required: false
+      default: 90
+      selector:
+        number:
+          min: 5
+          max: 600
+          step: 1
+          mode: box

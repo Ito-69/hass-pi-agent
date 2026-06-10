@@ -87,6 +87,19 @@ if bashio::config.has_value 'environment'; then
     done
 fi
 
+# --- Custom System Prompt ("House Laws") ---
+custom_system_prompt=$(bashio::config 'custom_system_prompt')
+if bashio::var.has_value "${custom_system_prompt}"; then
+    mkdir -p "${PI_DIR}"
+    printf '%s' "${custom_system_prompt}" > "${PI_DIR}/custom_system_prompt.md"
+    printf '%s' "${PI_DIR}/custom_system_prompt.md" > /var/run/s6/container_environment/CUSTOM_SYSTEM_PROMPT_FILE
+    echo "export CUSTOM_SYSTEM_PROMPT_FILE=\"${PI_DIR}/custom_system_prompt.md\"" >> /etc/profile.d/pi-agent.sh
+else
+    rm -f "${PI_DIR}/custom_system_prompt.md"
+    rm -f /var/run/s6/container_environment/CUSTOM_SYSTEM_PROMPT_FILE
+    sed -i '/CUSTOM_SYSTEM_PROMPT_FILE/d' /etc/profile.d/pi-agent.sh 2>/dev/null || true
+fi
+
 # --- Symlink ~/.pi to persistent /data/pi-agent ---
 mkdir -p "${PI_DIR}"
 ln -sfn "${PI_DIR}" /root/.pi
@@ -139,11 +152,32 @@ if omniroute_key:
         "models": models_list + [{"id": "omniroute"}]
     }
 if openai_base:
+    llama_models = [{"id": "llama-cpp"}]
+    import urllib.request
+    try:
+        url = openai_base + "/models" if not openai_base.endswith("/") else openai_base + "models"
+        req = urllib.request.Request(url, headers={"Authorization": "Bearer dummy"})
+        with urllib.request.urlopen(req, timeout=3) as response:
+            res_data = json.loads(response.read().decode())
+            if "data" in res_data:
+                for m in res_data["data"]:
+                    if "id" in m:
+                        llama_models.append({"id": m["id"]})
+    except Exception as e:
+        print(f"Failed to auto-discover local LLM models: {e}")
+    
+    seen = set()
+    unique_models = []
+    for m in models_list + llama_models:
+        if m["id"] not in seen:
+            seen.add(m["id"])
+            unique_models.append(m)
+
     data["providers"]["llama-cpp"] = {
         "baseUrl": openai_base,
         "api": "openai-completions",
         "apiKey": "dummy",
-        "models": models_list + [{"id": "llama-cpp"}]
+        "models": unique_models
     }
 with open(models_path, "w") as f:
     json.dump(data, f, indent=2)

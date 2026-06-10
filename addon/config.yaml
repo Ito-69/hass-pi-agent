@@ -33,6 +33,7 @@ options:
   install_integration: true
   environment: []
   additional_packages: []
+  custom_system_prompt: ''
 schema:
   default_provider: >-
     list(anthropic|openai|google|openrouter|groq|xai|mistral|cerebras|huggingface|github-copilot|amazon-bedrock|google-vertex|azure-openai-responses|opencode-zen|minimax|omniroute)
@@ -46,4 +47,5 @@ schema:
     - str
   additional_packages:
     - str
+  custom_system_prompt: str?
 

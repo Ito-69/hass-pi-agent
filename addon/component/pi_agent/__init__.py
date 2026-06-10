@@ -22,6 +22,7 @@ SERVICE_SCHEMA = vol.Schema(
         vol.Required("question"): cv.string,
         vol.Optional("provider"): cv.string,
         vol.Optional("model"): cv.string,
+        vol.Optional("timeout"): vol.Coerce(int),
     }
 )
 
@@ -34,6 +35,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         question = call.data["question"]
         provider = call.data.get("provider")
         model = call.data.get("model")
+        user_timeout = call.data.get("timeout")
         url = f"http://{ADDON_HOST}:{ADDON_PORT}/ask"
 
         payload = {"question": question}
@@ -46,7 +48,11 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         return_response = getattr(call, "return_response", False)
         if return_response:
             payload["sync"] = True
-            timeout_seconds = 90
+            if user_timeout:
+                payload["timeout"] = user_timeout
+                timeout_seconds = user_timeout + 5
+            else:
+                timeout_seconds = 95
         else:
             timeout_seconds = 10
 
