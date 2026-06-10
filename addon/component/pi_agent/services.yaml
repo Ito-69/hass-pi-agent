@@ -26,6 +26,7 @@ ask:
             - opencode-zen
             - minimax
             - omniroute
+            - llama-cpp
           custom_value: true
     model:
       name: Model
