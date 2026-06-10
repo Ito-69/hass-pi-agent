@@ -21,7 +21,7 @@ on:
       - main
 
 env:
-  ADDON_SLUG: pi_agent
+  ADDON_SLUG: hass_ai_assistant
   ADDON_TARGET: addon
 
 jobs:
