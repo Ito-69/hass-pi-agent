@@ -22,32 +22,18 @@ on:
 
 env:
   ADDON_SLUG: hass_ai_assistant
-  ADDON_TARGET: addon
+  BUILD_CONTEXT: addon
+  ARCHITECTURES: '["amd64", "aarch64"]'
 
 jobs:
-  build:
-    name: Build ${{ matrix.arch }}
+  init:
+    name: Initialize build
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    strategy:
-      matrix:
-        arch:
-          - amd64
-          - aarch64
-
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      version: ${{ steps.version.outputs.version }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Login to GHCR
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v6
 
       - name: Get version
         id: version
@@ -60,6 +46,27 @@ jobs:
             echo "version=$(grep '^version:' addon/config.yaml | awk '{print $2}' | tr -d '\"')" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Get build matrix
+        id: matrix
+        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@2026.06.0
+        with:
+          architectures: ${{ env.ARCHITECTURES }}
+          image-name: ${{ env.ADDON_SLUG }}
+
+  build:
+    name: Build ${{ matrix.arch }} image
+    needs: init
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.init.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v6
+
       - name: Sync extension source into addon build context
         run: |
           rm -rf addon/extensions/home-assistant
@@ -67,11 +74,36 @@ jobs:
           cp -a .pi/extensions/home-assistant addon/extensions/home-assistant
           rm -rf addon/extensions/home-assistant/node_modules addon/extensions/home-assistant/data
 
-      - name: Build add-on
-        uses: home-assistant/builder@master
+      - name: Build image
+        uses: home-assistant/builder/actions/build-image@2026.06.0
         with:
-          args: |
-            --${{ matrix.arch }} \
-            --target ${{ env.ADDON_TARGET }} \
-            --version "${{ steps.version.outputs.version }}" \
-            ${{ github.event_name == 'pull_request' && '--test' || '--no-cache' }}
+          arch: ${{ matrix.arch }}
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+          context: ${{ env.BUILD_CONTEXT }}
+          cosign: false
+          image: ${{ matrix.image }}
+          image-tags: |
+            ${{ needs.init.outputs.version }}
+            ${{ github.event_name != 'pull_request' && 'latest' || '' }}
+          push: ${{ github.event_name != 'pull_request' }}
+          version: ${{ needs.init.outputs.version }}
+
+  manifest:
+    name: Publish multi-arch manifest
+    if: github.event_name != 'pull_request'
+    needs: [init, build]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      packages: write
+    steps:
+      - name: Publish multi-arch manifest
+        uses: home-assistant/builder/actions/publish-multi-arch-manifest@2026.06.0
+        with:
+          architectures: ${{ env.ARCHITECTURES }}
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+          cosign: false
+          image-name: ${{ env.ADDON_SLUG }}
+          image-tags: |
+            ${{ needs.init.outputs.version }}
+            latest
