@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.5](https://github.com/Ito-69/hass-pi-agent/compare/v0.10.4...v0.10.5) (2026-07-06)
+
+
+### Bug Fixes
+
+* update @earendil-works/pi-coding-agent to 0.80.3
+
 ## [0.10.2](https://github.com/dkmaker/hass-pi-agent/compare/v0.10.1...v0.10.2) (2026-05-30)
 
 
