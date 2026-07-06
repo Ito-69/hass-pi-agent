@@ -1,10 +1,10 @@
 name: HASS AI Assistant
-version: 0.10.9
+version: 0.11.0
 slug: hass_ai_assistant
 image: ghcr.io/ito-69/hass-pi-agent/{arch}-hass_ai_assistant
 description: >-
-  Local and Cloud AI Assistant with full Home Assistant access — manage automations,
-  entities, dashboards, and more via natural language.
+  Local and Cloud AI Assistant with full Home Assistant access — manage
+  automations, entities, dashboards, and more via natural language.
 startup: services
 ingress: true
 ingress_port: 0
@@ -48,4 +48,3 @@ schema:
   additional_packages:
     - str
   custom_system_prompt: str?
-

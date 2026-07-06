@@ -1,5 +1,60 @@
 # Changelog
 
+## [0.11.0](https://github.com/Ito-69/hass-pi-agent/compare/v0.10.2...v0.11.0) (2026-07-06)
+
+
+### Features
+
+* add 13 new tools, slim AGENTS.md (v0.5.0) ([e6e831f](https://github.com/Ito-69/hass-pi-agent/commit/e6e831f92d59224794de36a3fd6ae54acb61d33e))
+* add card schema extractor for Lovelace dashboard cards ([1a0c1bf](https://github.com/Ito-69/hass-pi-agent/commit/1a0c1bfce225bf814146cf61c76740b3927c40fc))
+* add HA status line in TUI footer and MQTT client tools ([#28](https://github.com/Ito-69/hass-pi-agent/issues/28)) ([25e8bc7](https://github.com/Ito-69/hass-pi-agent/commit/25e8bc754f343b06d9bf96d898ed3d3438391f29))
+* add ha_addons, ha_backups, ha_system tools ([d30e6d4](https://github.com/Ito-69/hass-pi-agent/commit/d30e6d4211802268765856124006d78dd638b340))
+* add ha_dashboards tool for Lovelace dashboard management ([d422a0f](https://github.com/Ito-69/hass-pi-agent/commit/d422a0ff758e9f15a88df6e2f42b2e0ef7b9a261))
+* add ha_docs tool with shipped index + on-demand content ([50b1c52](https://github.com/Ito-69/hass-pi-agent/commit/50b1c52c8cba7038e85829b77bba57144f92fde9))
+* add ha_graph tool — entity & configuration relationship graph engine ([3d93361](https://github.com/Ito-69/hass-pi-agent/commit/3d93361bda2f9b30e64044851451eee54cb88bc7))
+* add ha_tool_docs, slim tool descriptions, addon-side context gathering ([fba79a3](https://github.com/Ito-69/hass-pi-agent/commit/fba79a38e2f6b1c0bfdd4ffcca236ae7e4f96025))
+* add ha_tool_docs, slim tool descriptions, addon-side context gathering ([2f33e0f](https://github.com/Ito-69/hass-pi-agent/commit/2f33e0f51f9a446cf6670f7b2c10ead4ce75c95b))
+* add OpenCode Go provider support ([3843efa](https://github.com/Ito-69/hass-pi-agent/commit/3843efaf59a190c33d329d40242cb6b91cf7f7c9))
+* add pagination to ha_docs get action (offset + max_lines) ([1c342b4](https://github.com/Ito-69/hass-pi-agent/commit/1c342b49fccdc5e3c0f106a19699cb12243b3367))
+* add pi_agent.ask service via custom component ([a643d1d](https://github.com/Ito-69/hass-pi-agent/commit/a643d1d850a9fcbc21bac81d3f394317f6e86570))
+* add regenerate-ids action to ha_entities tool ([f9f9ea0](https://github.com/Ito-69/hass-pi-agent/commit/f9f9ea015543b44dbce4eb94b814de54c5281023))
+* add repository.yaml for HA add-on store ([1adee16](https://github.com/Ito-69/hass-pi-agent/commit/1adee16623d734a5e1ec1630d330bdccff45f192))
+* align output formatting across all 34 HA tools ([#17](https://github.com/Ito-69/hass-pi-agent/issues/17)) ([c2c18cd](https://github.com/Ito-69/hass-pi-agent/commit/c2c18cddc239f812010484774047374d919c5e5d))
+* auto-discover models for all configured custom providers at startup ([15790cd](https://github.com/Ito-69/hass-pi-agent/commit/15790cdd06bf34aa74ae32dc260c74a753c4a32c))
+* build Pi Agent Docker add-on with s6-overlay services ([a40e6cb](https://github.com/Ito-69/hass-pi-agent/commit/a40e6cb617b17a970f73ef7d8f287f5ce3e992df))
+* configurable provider/model for pi_agent.ask service ([3a70a0d](https://github.com/Ito-69/hass-pi-agent/commit/3a70a0dfeee71f29a5c8acc75c902da014018fc6))
+* configurable provider/model for pi_agent.ask service ([dbf232f](https://github.com/Ito-69/hass-pi-agent/commit/dbf232f5f193fbfec555a8c54eabec55943dcd06))
+* dynamic context injection, system prompt, tmux fix, pin pi version ([2c7fc79](https://github.com/Ito-69/hass-pi-agent/commit/2c7fc791c15108ca0ea8dbcf0c52ac6f3d5cca59))
+* enable llama-cpp as a selectable provider in UI and service schemas ([52302b0](https://github.com/Ito-69/hass-pi-agent/commit/52302b081ff4bc7a601f14b2c79a9d266f36ecdc))
+* Implement Phase 2 enhancements for HASS AI Assistant ([be907b8](https://github.com/Ito-69/hass-pi-agent/commit/be907b889064c21473f87aa15221648b7ed2c1a6))
+* show visible startup status message with mock fallback for dev mode ([bd4cb92](https://github.com/Ito-69/hass-pi-agent/commit/bd4cb9293199c6997bb4ab0da319a5a001877cbf))
+* show visible startup status message with mock fallback for dev mode ([ee76315](https://github.com/Ito-69/hass-pi-agent/commit/ee7631583cd99ab44b95fd1355bb0ba6230daead))
+
+
+### Bug Fixes
+
+* add missing extension files (ha-policies, questionnaire, lib/policies) ([#18](https://github.com/Ito-69/hass-pi-agent/issues/18)) ([36cb0c5](https://github.com/Ito-69/hass-pi-agent/commit/36cb0c5827e3fd9f4ac01a451e51da5da535711c))
+* add programmatic confirmation gate to all destructive operations ([234d41d](https://github.com/Ito-69/hass-pi-agent/commit/234d41d712a06fa81fc9e7b0f084d8932a310a0a))
+* add programmatic confirmation gate to all destructive operations ([d13e9c1](https://github.com/Ito-69/hass-pi-agent/commit/d13e9c133183a39c968713af7c8fb8b9035670f5))
+* clean up legacy extension copy from volume on startup ([#25](https://github.com/Ito-69/hass-pi-agent/issues/25)) ([61cba5a](https://github.com/Ito-69/hass-pi-agent/commit/61cba5a15bc65e60980e35d3d7d92c3c59b6251b))
+* ensure release-please triggers Docker build automatically ([#20](https://github.com/Ito-69/hass-pi-agent/issues/20)) ([89cde15](https://github.com/Ito-69/hass-pi-agent/commit/89cde15cfd74c381a4d7254d5911abcadb201ef0))
+* include extension in addon build context, remove image field for local builds ([422b449](https://github.com/Ito-69/hass-pi-agent/commit/422b449ff183bb756fe3f5da81de51fdaf3d3c4e))
+* **init-pi:** drop custom opencode provider (pi has it built-in), fix env var mapping, remove pi-web-access ([bafeb96](https://github.com/Ito-69/hass-pi-agent/commit/bafeb9654bf03219dfbf0d159811fae7dd812ac6))
+* **init-pi:** export env vars before Python models.json generation ([1d9b232](https://github.com/Ito-69/hass-pi-agent/commit/1d9b2329a5698728e959b22625c46ab0e6775afc))
+* load extension from Docker image via --extension flag ([#23](https://github.com/Ito-69/hass-pi-agent/issues/23)) ([f3675ee](https://github.com/Ito-69/hass-pi-agent/commit/f3675eee9a205ef199212092828d2fec0c99d85c))
+* make release tag input optional and default checkout to triggering ref ([49fee00](https://github.com/Ito-69/hass-pi-agent/commit/49fee00af69e1ef606e9f1e7ed3bb8e78c6ef570))
+* migrate to [@earendil-works](https://github.com/earendil-works) pi 0.78.0 and typebox 1.x ([ab0a0d2](https://github.com/Ito-69/hass-pi-agent/commit/ab0a0d25ead734e01074619fc7a770c997a60ac3))
+* policy [object Object] rendering and entity update undefined ([#27](https://github.com/Ito-69/hass-pi-agent/issues/27)) ([51a1268](https://github.com/Ito-69/hass-pi-agent/commit/51a126841e36efc6541eee5c0c7f006134e35cd5))
+* resolve character rendering glitches by switching ttyd to DOM renderer ([cd6b54e](https://github.com/Ito-69/hass-pi-agent/commit/cd6b54ee614979608c0329e5c7896ce346dc98f1))
+* resolve HA Core version from /core/info instead of supervisor info ([4d5d31c](https://github.com/Ito-69/hass-pi-agent/commit/4d5d31c1fbde61d5c1a40a9f56e6ca7e46b63908))
+* rollback pi-coding-agent to 0.79.1 to fix interactive crashes ([560f033](https://github.com/Ito-69/hass-pi-agent/commit/560f033b88b48e203a409976f83b90252c4b8e97))
+* sync extension source into addon build context before deploy ([#22](https://github.com/Ito-69/hass-pi-agent/issues/22)) ([53a6f51](https://github.com/Ito-69/hass-pi-agent/commit/53a6f516965039c24c89667f167cab33c3147890))
+* tmux extended-keys-format csi-u for Pi compatibility ([947cb00](https://github.com/Ito-69/hass-pi-agent/commit/947cb007a4e618ff6907406e8beb182d5009db8a))
+* trigger Docker build on release publish instead of tag push ([e0d6482](https://github.com/Ito-69/hass-pi-agent/commit/e0d648239adc5f6c85e2c8dc9e1604cbd8f8d506))
+* trigger Docker build on release publish instead of tag push ([a438c4b](https://github.com/Ito-69/hass-pi-agent/commit/a438c4b3fbd82e064eb8d2404c9677bd1e1511fd))
+* use Git Trees API for docs index (no 1000-item limit), fetch docs too ([1ea4b07](https://github.com/Ito-69/hass-pi-agent/commit/1ea4b07cadc674dcc9fdf86bc9f6ff632623f579))
+* use supervisorApi (WebSocket) for context gathering, add icon ([17bd4e9](https://github.com/Ito-69/hass-pi-agent/commit/17bd4e964ea1ff17befbfed6d515856581cd0e6f))
+
 ## [0.10.7](https://github.com/Ito-69/hass-pi-agent/compare/v0.10.6...v0.10.7) (2026-07-06)
 
 
