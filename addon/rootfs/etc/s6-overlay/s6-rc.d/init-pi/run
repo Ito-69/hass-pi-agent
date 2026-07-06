@@ -87,6 +87,23 @@ if bashio::config.has_value 'environment'; then
     done
 fi
 
+# --- Map user-friendly env var names to pi's expected env vars ---
+# Pi looks for OPENCODE_API_KEY for both "opencode" and "opencode-go" providers.
+# Our add-on allows users to set OPENCODE_ZEN_API_KEY or OPENCODE_GO_API_KEY
+# for clarity; map them to the single env var pi expects.
+if [[ -f /var/run/s6/container_environment/OPENCODE_ZEN_API_KEY ]] && \
+   [[ ! -f /var/run/s6/container_environment/OPENCODE_API_KEY ]]; then
+    key_value=$(cat /var/run/s6/container_environment/OPENCODE_ZEN_API_KEY)
+    printf '%s' "${key_value}" > /var/run/s6/container_environment/OPENCODE_API_KEY
+    echo "export OPENCODE_API_KEY=\"${key_value}\"" >> /etc/profile.d/pi-agent.sh
+fi
+if [[ -f /var/run/s6/container_environment/OPENCODE_GO_API_KEY ]] && \
+   [[ ! -f /var/run/s6/container_environment/OPENCODE_API_KEY ]]; then
+    key_value=$(cat /var/run/s6/container_environment/OPENCODE_GO_API_KEY)
+    printf '%s' "${key_value}" > /var/run/s6/container_environment/OPENCODE_API_KEY
+    echo "export OPENCODE_API_KEY=\"${key_value}\"" >> /etc/profile.d/pi-agent.sh
+fi
+
 # --- Custom System Prompt ("House Laws") ---
 custom_system_prompt=$(bashio::config 'custom_system_prompt')
 if bashio::var.has_value "${custom_system_prompt}"; then
@@ -148,36 +165,21 @@ def get_unique(models):
             unique.append(m)
     return unique
 
-# Read environment keys
-opencode_key = os.environ.get("OPENCODE_ZEN_API_KEY", "")
-opencode_go_key = os.environ.get("OPENCODE_GO_API_KEY", "")
+# Read environment keys for custom (non-pi-builtin) providers
 minimax_key = os.environ.get("MINIMAX_API_KEY", "")
 omniroute_key = os.environ.get("OMNIROUTE_API_KEY", "")
 openai_base = os.environ.get("OPENAI_API_BASE", "")
 default_model = os.environ.get("PI_DEFAULT_MODEL", "")
 service_model = os.environ.get("PI_SERVICE_MODEL", "")
 
+# Note: "opencode" and "opencode-go" are built-in pi providers (0.79.1+).
+# pi already defines their endpoints and uses OPENCODE_API_KEY for both.
+# No custom models.json entry needed — setting OPENCODE_API_KEY is sufficient.
+
 models_list = []
 for m in [default_model, service_model]:
     if m and m.strip():
         models_list.append({"id": m.strip()})
-
-if opencode_key:
-    discovered = fetch_models("https://opencode.ai/zen/v1", opencode_key)
-    data["providers"]["opencode-zen"] = {
-        "baseUrl": "https://opencode.ai/zen/v1",
-        "api": "openai-completions",
-        "apiKey": opencode_key,
-        "models": get_unique(models_list + discovered + [{"id": "opencode-zen"}])
-    }
-if opencode_go_key:
-    discovered = fetch_models("https://opencode.ai/zen/go/v1", opencode_go_key)
-    data["providers"]["opencode-go"] = {
-        "baseUrl": "https://opencode.ai/zen/go/v1",
-        "api": "openai-completions",
-        "apiKey": opencode_go_key,
-        "models": get_unique(models_list + discovered + [{"id": "opencode-go"}])
-    }
 if minimax_key:
     discovered = fetch_models("https://api.minimax.io/v1", minimax_key)
     data["providers"]["minimax"] = {
@@ -216,7 +218,7 @@ if [[ ! -f "${PI_SETTINGS}" ]]; then
     echo '{}' > "${PI_SETTINGS}"
 fi
 tmp=$(mktemp)
-jq '. + {"quietStartup": true, "collapseChangelog": true} | .packages = ((.packages // []) + ["npm:context-mode", "npm:pi-web-access"] | unique)' "${PI_SETTINGS}" > "$tmp" && mv "$tmp" "${PI_SETTINGS}"
+jq '. + {"quietStartup": true, "collapseChangelog": true} | .packages = ((.packages // []) + ["npm:context-mode"] | unique)' "${PI_SETTINGS}" > "$tmp" && mv "$tmp" "${PI_SETTINGS}"
 
 # --- Clean up legacy extension copy from /homeassistant volume ---
 if [[ -d /homeassistant/.pi/extensions/home-assistant ]]; then
