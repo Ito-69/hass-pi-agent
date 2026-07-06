@@ -24,6 +24,7 @@ env:
   ADDON_SLUG: hass_ai_assistant
   BUILD_CONTEXT: addon
   ARCHITECTURES: '["amd64", "aarch64"]'
+  REGISTRY_PREFIX: ghcr.io/ito-69/hass-pi-agent
 
 jobs:
   init:
@@ -52,6 +53,7 @@ jobs:
         with:
           architectures: ${{ env.ARCHITECTURES }}
           image-name: ${{ env.ADDON_SLUG }}
+          registry-prefix: ${{ env.REGISTRY_PREFIX }}
 
   build:
     name: Build ${{ matrix.arch }} image
@@ -104,6 +106,7 @@ jobs:
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
           cosign: false
           image-name: ${{ env.ADDON_SLUG }}
+          registry-prefix: ${{ env.REGISTRY_PREFIX }}
           image-tags: |
             ${{ needs.init.outputs.version }}
             latest
