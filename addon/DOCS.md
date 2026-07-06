@@ -22,6 +22,7 @@ Supported providers:
 - `amazon-bedrock` (AWS Bedrock)
 - `azure-openai-responses` (Azure OpenAI)
 - `opencode-zen` (OpenCode Zen API)
+- `opencode-go` (OpenCode Go API)
 - `minimax` (MiniMax API)
 - `omniroute` (Omniroute API)
 
@@ -65,6 +66,7 @@ Add your provider's API key as an environment variable:
 | Azure OpenAI | `AZURE_OPENAI_API_KEY=...` |
 | GitHub Copilot | `GITHUB_TOKEN=gho_...` |
 | OpenCode-Zen | `OPENCODE_ZEN_API_KEY=...` |
+| OpenCode-Go | `OPENCODE_GO_API_KEY=...` |
 | MiniMax | `MINIMAX_API_KEY=...` |
 | Omniroute | `OMNIROUTE_API_KEY=...` |
 | Amazon Bedrock | `AWS_ACCESS_KEY_ID=...` |

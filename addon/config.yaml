@@ -1,5 +1,5 @@
 name: HASS AI Assistant
-version: 0.10.5
+version: 0.10.6
 slug: hass_ai_assistant
 image: ghcr.io/ito-69/hass-pi-agent/{arch}-hass_ai_assistant
 description: >-
@@ -36,12 +36,12 @@ options:
   custom_system_prompt: ''
 schema:
   default_provider: >-
-    list(anthropic|openai|google|openrouter|groq|xai|mistral|cerebras|huggingface|github-copilot|amazon-bedrock|google-vertex|azure-openai-responses|opencode-zen|minimax|omniroute|llama-cpp)
+    list(anthropic|openai|google|openrouter|groq|xai|mistral|cerebras|huggingface|github-copilot|amazon-bedrock|google-vertex|azure-openai-responses|opencode-zen|opencode-go|minimax|omniroute|llama-cpp)
   default_model: str?
   openai_api_base: str?
   install_integration: bool?
   service_provider: >-
-    list(anthropic|openai|google|openrouter|groq|xai|mistral|cerebras|huggingface|github-copilot|amazon-bedrock|google-vertex|azure-openai-responses|opencode-zen|minimax|omniroute|llama-cpp)?
+    list(anthropic|openai|google|openrouter|groq|xai|mistral|cerebras|huggingface|github-copilot|amazon-bedrock|google-vertex|azure-openai-responses|opencode-zen|opencode-go|minimax|omniroute|llama-cpp)?
   service_model: str?
   environment:
     - str

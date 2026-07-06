@@ -38,7 +38,7 @@ Click **AI Assistant** in the sidebar, or go to the **Info** tab and click **Ope
 
 Select your AI provider from the **Default Provider** dropdown:
 
-Anthropic · OpenAI · Google · OpenRouter · Groq · xAI · Mistral · Cerebras · Hugging Face · GitHub Copilot · Amazon Bedrock · Google Vertex · Azure OpenAI · OpenCode-Zen · MiniMax · Omniroute
+Anthropic · OpenAI · Google · OpenRouter · Groq · xAI · Mistral · Cerebras · Hugging Face · GitHub Copilot · Amazon Bedrock · Google Vertex · Azure OpenAI · OpenCode-Zen · OpenCode-Go · MiniMax · Omniroute
 
 ### Local LLM (llama.cpp)
 To use a local `llama.cpp` server (e.g. running on your host VM or network):
@@ -63,6 +63,7 @@ Add your provider's API key as an environment variable in the **Environment** li
 | Hugging Face | `HF_TOKEN=hf_...` |
 | GitHub Copilot | `GITHUB_TOKEN=gho_...` |
 | OpenCode-Zen | `OPENCODE_ZEN_API_KEY=...` |
+| OpenCode-Go | `OPENCODE_GO_API_KEY=...` |
 | MiniMax | `MINIMAX_API_KEY=...` |
 | Omniroute | `OMNIROUTE_API_KEY=...` |
 | Amazon Bedrock | `AWS_ACCESS_KEY_ID=...` + `AWS_SECRET_ACCESS_KEY=...` + `AWS_REGION=us-east-1` |

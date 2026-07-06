@@ -10,13 +10,14 @@
 
 Всички настройки се правят от графичния интерфейс на Home Assistant: **Settings** → **Add-ons** → **HASS AI Assistant** → таб **Configuration**.
 
-### ☁️ Облачни AI доставчици (OpenCode-Zen, MiniMax, Omniroute)
+### ☁️ Облачни AI доставчици (OpenCode-Zen, OpenCode-Go, MiniMax, Omniroute)
 За да използвате тези доставчици, трябва да въведете вашите API ключове в секция **`environment`** най-долу на конфигурационната страница като списък:
 * `OPENCODE_ZEN_API_KEY=sk-your-key-here`
+* `OPENCODE_GO_API_KEY=sk-your-key-here`
 * `MINIMAX_API_KEY=your-key-here`
 * `OMNIROUTE_API_KEY=your-key-here`
 
-След като добавите ключовете, изберете съответния доставчик в полето `default_provider` (например `opencode-zen` или `minimax`). Можете да оставите полето `default_model` празно – асистентът автоматично ще зареди най-добрите препоръчителни модели при стартиране.
+След като добавите ключовете, изберете съответния доставчик в полето `default_provider` (например `opencode-zen`, `opencode-go` или `minimax`). Можете да оставите полето `default_model` празно – асистентът автоматично ще зареди най-добрите препоръчителни модели при стартиране.
 
 ### 🖥️ Локална Llama.cpp (OpenAI съвместима)
 Ако искате асистентът да работи изцяло локално на вашата машина:

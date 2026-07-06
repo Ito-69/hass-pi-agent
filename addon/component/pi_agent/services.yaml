@@ -24,6 +24,7 @@ ask:
             - xai
             - mistral
             - opencode-zen
+            - opencode-go
             - minimax
             - omniroute
             - llama-cpp

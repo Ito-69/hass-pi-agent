@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.6](https://github.com/Ito-69/hass-pi-agent/compare/v0.10.5...v0.10.6) (2026-07-06)
+
+
+### Features
+
+* add OpenCode Go provider support
+
 ## [0.10.5](https://github.com/Ito-69/hass-pi-agent/compare/v0.10.4...v0.10.5) (2026-07-06)
 
 
