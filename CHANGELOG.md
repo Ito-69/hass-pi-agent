@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.7](https://github.com/Ito-69/hass-pi-agent/compare/v0.10.6...v0.10.7) (2026-07-06)
+
+
+### Bug Fixes
+
+* rollback @earendil-works/pi-coding-agent to 0.79.1 to fix interactive session crashes
+
 ## [0.10.6](https://github.com/Ito-69/hass-pi-agent/compare/v0.10.5...v0.10.6) (2026-07-06)
 
 
