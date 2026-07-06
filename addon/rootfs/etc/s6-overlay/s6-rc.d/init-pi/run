@@ -104,6 +104,13 @@ fi
 mkdir -p "${PI_DIR}"
 ln -sfn "${PI_DIR}" /root/.pi
 
+# --- Export all written env vars for this process (needed by the Python block below) ---
+# The s6 container_environment files only apply to NEW services started by s6-rc,
+# not to the current process. We need to source the profile script to make them
+# available to the inline Python script.
+# shellcheck source=/dev/null
+source /etc/profile.d/pi-agent.sh
+
 # --- Generate models.json for custom/local providers ---
 python3 -c '
 import json, os
