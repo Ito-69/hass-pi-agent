@@ -45,6 +45,13 @@ if bashio::var.has_value "${default_model}"; then
     echo "export PI_DEFAULT_MODEL=\"${default_model}\"" >> /etc/profile.d/pi-agent.sh
 fi
 
+# --- Fresh session toggle ---
+fresh_session=$(bashio::config 'fresh_session')
+if bashio::var.has_value "${fresh_session}" && [[ "${fresh_session}" == "true" ]]; then
+    printf '%s' "true" > /var/run/s6/container_environment/PI_FRESH_SESSION
+    echo "export PI_FRESH_SESSION=\"true\"" >> /etc/profile.d/pi-agent.sh
+fi
+
 # --- Service provider/model (for pi_agent.ask, separate from interactive defaults) ---
 service_provider=$(bashio::config 'service_provider')
 if bashio::var.has_value "${service_provider}"; then

@@ -25,6 +25,11 @@ if [[ -n "${PI_DEFAULT_MODEL:-}" ]]; then
     PI_ARGS+=(--model "${PI_DEFAULT_MODEL}")
 fi
 
+# Continue previous session if available (skip when PI_FRESH_SESSION=true)
+if [[ "${PI_FRESH_SESSION:-}" != "true" ]]; then
+    PI_ARGS+=(--continue)
+fi
+
 echo "Starting Pi Agent..."
 echo "Working directory: $(pwd)"
 echo ""
