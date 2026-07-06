@@ -218,7 +218,7 @@ if [[ ! -f "${PI_SETTINGS}" ]]; then
     echo '{}' > "${PI_SETTINGS}"
 fi
 tmp=$(mktemp)
-jq '. + {"quietStartup": true, "collapseChangelog": true} | .packages = ((.packages // []) + ["npm:context-mode"] | unique)' "${PI_SETTINGS}" > "$tmp" && mv "$tmp" "${PI_SETTINGS}"
+jq '. + {"quietStartup": true, "collapseChangelog": true} | .packages = ((.packages // []) + ["npm:context-mode", "npm:pi-web-access"] | unique)' "${PI_SETTINGS}" > "$tmp" && mv "$tmp" "${PI_SETTINGS}"
 
 # --- Clean up legacy extension copy from /homeassistant volume ---
 if [[ -d /homeassistant/.pi/extensions/home-assistant ]]; then
