@@ -1,23 +1,24 @@
 /**
  * Home Assistant system information tool.
  *
- * Read-only system info: supervisor, host, OS, network, resolution center.
+ * Read-only system info: supervisor, host, OS, network, resolution center, resources, docker.
  */
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "@earendil-works/pi-ai";
 import { StringEnum } from "@earendil-works/pi-ai";
 import { supervisorApi } from "../lib/supervisor.js";
 import { renderMarkdownResult, renderToolCall } from "../lib/format.js";
+import { readFileSync } from "fs";
 
 export function registerSystemTool(pi: ExtensionAPI): void {
   pi.registerTool({
     name: "ha_system",
     label: "HA System",
-    description: `View HA system information. Actions: info, host, os, network, resolution. Use ha_tool_docs('ha_system') for full usage.`,
+    description: `View HA system information. Actions: info, host, os, network, resolution, resources, docker. Use ha_tool_docs('ha_system') for full usage.`,
 
     parameters: Type.Object({
       action: StringEnum(
-        ["info", "host", "os", "network", "resolution"] as const,
+        ["info", "host", "os", "network", "resolution", "resources", "docker"] as const,
         { description: "Action to perform" }
       ),
     }),
@@ -39,8 +40,138 @@ export function registerSystemTool(pi: ExtensionAPI): void {
 }
 
 function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
   if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(0)} MB`;
   return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+}
+
+function getSystemResources(): string {
+  let uptimeStr = "Unknown";
+  try {
+    const uptimeSec = parseFloat(readFileSync("/proc/uptime", "utf8").split(" ")[0]);
+    const days = Math.floor(uptimeSec / (24 * 3600));
+    const hours = Math.floor((uptimeSec % (24 * 3600)) / 3600);
+    const minutes = Math.floor((uptimeSec % 3600) / 60);
+    uptimeStr = `${days}d ${hours}h ${minutes}m`;
+  } catch (err) {
+    uptimeStr = `Error: ${(err as Error).message}`;
+  }
+
+  let loadStr = "Unknown";
+  try {
+    const loadParts = readFileSync("/proc/loadavg", "utf8").trim().split(" ");
+    loadStr = `1m: ${loadParts[0]}, 5m: ${loadParts[1]}, 15m: ${loadParts[2]}`;
+  } catch (err) {
+    loadStr = `Error: ${(err as Error).message}`;
+  }
+
+  let memStr = "Unknown";
+  let swapStr = "Unknown";
+  try {
+    const meminfo = readFileSync("/proc/meminfo", "utf8");
+    const getVal = (key: string) => {
+      const match = meminfo.match(new RegExp(`${key}:\\s+(\\d+)\\s+kB`));
+      return match ? parseInt(match[1]) * 1024 : 0;
+    };
+    const total = getVal("MemTotal");
+    const free = getVal("MemFree");
+    const available = getVal("MemAvailable") || (free + getVal("Cached") + getVal("Buffers"));
+    const used = total - available;
+    const pct = total > 0 ? ((used / total) * 100).toFixed(1) : "0";
+
+    const swapTotal = getVal("SwapTotal");
+    const swapFree = getVal("SwapFree");
+    const swapUsed = swapTotal - swapFree;
+    const swapPct = swapTotal > 0 ? ((swapUsed / swapTotal) * 100).toFixed(1) : "0";
+
+    memStr = `${formatBytes(used)} / ${formatBytes(total)} (${pct}% used, ${formatBytes(available)} available)`;
+    swapStr = swapTotal > 0 
+      ? `${formatBytes(swapUsed)} / ${formatBytes(swapTotal)} (${swapPct}% used)`
+      : "None";
+  } catch (err) {
+    memStr = `Error: ${(err as Error).message}`;
+  }
+
+  return [
+    "## Host Resources",
+    "",
+    `- **Uptime:** ${uptimeStr}`,
+    `- **Load Average:** ${loadStr}`,
+    `- **Memory (RAM):** ${memStr}`,
+    `- **Swap:** ${swapStr}`
+  ].join("\n");
+}
+
+async function getDockerStats(): Promise<string> {
+  const d = await supervisorApi<Record<string, any>>("/addons");
+  const addons = (d.addons || []) as Array<Record<string, any>>;
+  const installed = addons.filter((a) => a.installed);
+
+  const statsPromises = installed.map(async (a) => {
+    if (a.state !== "started") {
+      return {
+        name: a.name,
+        slug: a.slug,
+        state: a.state,
+        cpu: 0,
+        memUsed: 0,
+        memLimit: 0,
+        memPct: 0,
+        netRx: 0,
+        netTx: 0,
+      };
+    }
+    try {
+      const s = await supervisorApi<Record<string, any>>(`/addons/${a.slug}/stats`);
+      return {
+        name: a.name,
+        slug: a.slug,
+        state: a.state,
+        cpu: s.cpu_percent || 0,
+        memUsed: s.memory_usage || 0,
+        memLimit: s.memory_limit || 0,
+        memPct: s.memory_percent || 0,
+        netRx: s.network_rx || 0,
+        netTx: s.network_tx || 0,
+      };
+    } catch (err) {
+      return {
+        name: a.name,
+        slug: a.slug,
+        state: a.state,
+        error: (err as Error).message,
+      };
+    }
+  });
+
+  const results = await Promise.all(statsPromises);
+  
+  const rows = [
+    "## Add-on Stats (Docker containers)",
+    "",
+    "| Add-on | State | CPU % | Memory | Network RX / TX |",
+    "|--------|-------|-------|--------|-----------------|"
+  ];
+
+  for (const r of results) {
+    if ("error" in r && r.error) {
+      rows.push(`| ${r.name} | 🔴 error | - | Error: ${r.error} | - |`);
+    } else {
+      const stateIcon = r.state === "started" ? "🟢" : "⚪";
+      if (r.state === "started") {
+        const memLimitStr = r.memLimit ? ` / ${formatBytes(r.memLimit)}` : "";
+        const memPctStr = r.memPct ? ` (${r.memPct.toFixed(1)}%)` : "";
+        rows.push(
+          `| ${r.name} | ${stateIcon} ${r.state} | ${r.cpu.toFixed(1)}% | ${formatBytes(r.memUsed)}${memLimitStr}${memPctStr} | ${formatBytes(r.netRx)} / ${formatBytes(r.netTx)} |`
+        );
+      } else {
+        rows.push(`| ${r.name} | ${stateIcon} ${r.state} | - | - | - |`);
+      }
+    }
+  }
+
+  return rows.join("\n");
 }
 
 async function executeAction(action: string): Promise<string> {
@@ -153,6 +284,14 @@ async function executeAction(action: string): Promise<string> {
       }
 
       return parts.join("\n");
+    }
+
+    case "resources": {
+      return getSystemResources();
+    }
+
+    case "docker": {
+      return await getDockerStats();
     }
 
     default:

@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.10.10](https://github.com/Ito-69/hass-pi-agent/compare/v0.10.6.7...v0.10.10) (2026-08-30)
+
+### Features
+
+* upgrade @earendil-works/pi-coding-agent to 0.84.4
+* add fresh session toggle and session resume capability
+* sync local extension with ha-infra tool and host resource monitoring
+
+### Bug Fixes & Improvements
+
+* migrate CI build workflow to modern reusable Home Assistant builder actions
+* fix lowercase ghcr docker repository name requirement
+* export environment variables prior to Python models.json generation
+
+
 ## [0.10.7](https://github.com/Ito-69/hass-pi-agent/compare/v0.10.6...v0.10.7) (2026-07-06)
 
 

@@ -34,6 +34,7 @@ import { registerShoppingListTool } from "./tools/ha-shopping-list.js";
 import { registerToolDocsTool } from "./tools/ha-tool-docs.js";
 import { registerPoliciesTool } from "./tools/ha-policies.js";
 import { registerQuestionnaireTool } from "./tools/questionnaire.js";
+import { registerInfraTool } from "./tools/ha-infra.js";
 import { policiesExist, loadPolicies, formatPoliciesForPrompt } from "./lib/policies.js";
 import { wsClose } from "./lib/ws.js";
 import {
@@ -96,6 +97,7 @@ export default function (pi: ExtensionAPI) {
   registerToolDocsTool(pi);
   registerPoliciesTool(pi);
   registerQuestionnaireTool(pi);
+  registerInfraTool(pi);
 
   // /setup slash command — triggers the guided policy setup wizard
   pi.registerCommand("setup", {
@@ -198,6 +200,21 @@ ${addonLines || "No add-ons installed"}${areaLine}`;
           ? appendedPrompt + "\n\n" + policyPrompt
           : policyPrompt;
       }
+    }
+
+    // Inject custom system prompt ("house laws") from config
+    const customPromptPath = "/data/pi-agent/custom_system_prompt.md";
+    let customPrompt = "";
+    try {
+      customPrompt = readFileSync(customPromptPath, "utf-8");
+    } catch {
+      // Ignore if file doesn't exist
+    }
+
+    if (customPrompt && customPrompt.trim()) {
+      appendedPrompt = appendedPrompt
+        ? appendedPrompt + "\n\n" + customPrompt.trim()
+        : customPrompt.trim();
     }
 
     if (appendedPrompt) {
