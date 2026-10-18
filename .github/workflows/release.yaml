@@ -29,3 +29,7 @@ jobs:
     uses: ./.github/workflows/build.yaml
     with:
       tag: ${{ needs.release.outputs.tag_name }}
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
