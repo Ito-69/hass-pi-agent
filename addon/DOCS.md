@@ -36,6 +36,8 @@ Optionally set a default model. Accepts any model pattern or ID supported by Pi,
 - `google/gemini-2.5-pro`
 - `*sonnet*` (fuzzy match)
 
+The default is `gpt-6.1-sol` (matches the default `openai` provider). If you change the provider, change the model too.
+
 If left empty, the **Default Provider** setting is ignored and Pi starts with the model last selected in Pi (via `/model`). Pi requires a model whenever a provider is set, so set both to pin a specific provider.
 
 ### Local LLM (llama.cpp)
