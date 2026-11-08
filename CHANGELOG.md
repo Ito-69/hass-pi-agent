@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.11.0](https://github.com/Ito-69/hass-pi-agent/compare/v0.10.10...v0.11.0) (2026-11-08)
+
+
+### Features
+
+* **addon:** default Default Model to gpt-6.1-sol ([7c838f5](https://github.com/Ito-69/hass-pi-agent/commit/7c838f56f68c216b615b7707eee9850d3956fcef))
+* **addon:** local models — fix llama.cpp setup, add Ollama ([b4f3f9c](https://github.com/Ito-69/hass-pi-agent/commit/b4f3f9cd233ebf359942e4977ff3a0fb83ed9447))
+* **addon:** support local models via Ollama ([25184c6](https://github.com/Ito-69/hass-pi-agent/commit/25184c685e71c04dd23051b6c1cb5297a017b86f))
+
+
+### Bug Fixes
+
+* **addon:** don't pass --provider without --model ([30697de](https://github.com/Ito-69/hass-pi-agent/commit/30697de68384aeef349e4508b8bbb712370d0e6e))
+* **addon:** don't pass --provider without --model ([2f71e25](https://github.com/Ito-69/hass-pi-agent/commit/2f71e2568a5a2f021a248b59140ab0a8b75cee33))
+* **addon:** make llama.cpp setup actually use the local server ([2211ca6](https://github.com/Ito-69/hass-pi-agent/commit/2211ca6fc256d3acdb618983bc4b992f2dd5babc))
+* **extension:** use wsCommand for area list; send proper onUpdate result ([ae95bf6](https://github.com/Ito-69/hass-pi-agent/commit/ae95bf668448ecbf73eab76c7de4d2c65ff4cbb2))
+* **extension:** use wsCommand for area list; send proper onUpdate result ([5623af6](https://github.com/Ito-69/hass-pi-agent/commit/5623af6d2b23b0709335daebcddfd6477ca628b2))
+
 ## [0.10.10](https://github.com/Ito-69/hass-pi-agent/compare/v0.10.6.7...v0.10.10) (2026-08-30)
 
 ### Features
