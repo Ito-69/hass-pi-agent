@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.12.0](https://github.com/Ito-69/hass-pi-agent/compare/v0.11.0...v0.12.0) (2026-11-08)
+
+
+### Features
+
+* **addon:** write-guard and bash timeout for the agent's built-in tools ([7818ec1](https://github.com/Ito-69/hass-pi-agent/commit/7818ec19442fa1ea3f88cf8657ecd5664b571efd))
+* **extension:** automatic pre-mutation backups with JSONL changelog ([dbbc12b](https://github.com/Ito-69/hass-pi-agent/commit/dbbc12bbe72ceb5f652835daba0fde083e1ec495))
+* port safety features from upstream (backups, write-guard, bash timeout) ([8fb3a57](https://github.com/Ito-69/hass-pi-agent/commit/8fb3a5736d4a930e3a6ce34e41864848dc796c38))
+* **write-guard:** /write-allow command + document safety features ([39dd847](https://github.com/Ito-69/hass-pi-agent/commit/39dd847b11d04e62bb1e6bf362744e9045c724c0))
+
+
+### Bug Fixes
+
+* **ha-scripts:** update reports the real cause, not a blanket 'not found' ([1465ad8](https://github.com/Ito-69/hass-pi-agent/commit/1465ad8f523e40e777543ca3998d4c63c60b38eb))
+
 ## [0.11.0](https://github.com/Ito-69/hass-pi-agent/compare/v0.10.10...v0.11.0) (2026-11-08)
 
 
