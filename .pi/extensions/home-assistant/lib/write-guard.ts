@@ -9,6 +9,10 @@
  *   3. anything inside !include_dir_* directories
  *   4. extra globs from the shipped write-guard.json + add-on option write_guard_allow
  *
+ * Users can also allow paths at runtime with the /write-allow slash command;
+ * those globs live in /homeassistant/.pi-agent/write-allow.json (itself NOT
+ * writable by the agent's built-in tools, so the agent can't unblock itself).
+ *
  * Anything else under /homeassistant (.storage, secrets.yaml, custom_components,
  * ...) is blocked for the built-in write/edit tools and for OBVIOUS bash write
  * patterns. Paths outside /homeassistant (/tmp, /share, /data, ...) are out of
@@ -16,7 +20,7 @@
  * sanctioned IO + pre-mutation backups).
  */
 import { resolve, dirname, relative, isAbsolute, join } from "node:path";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { HA_CONFIG_PATH } from "./config.js";
 import { resolveYamlIncludes } from "./graph/yaml-resolver.js";
@@ -47,6 +51,30 @@ function globToRe(glob: string): RegExp {
   return new RegExp("^" + re + "$");
 }
 
+/** Runtime allowlist managed by the user via /write-allow (no restart needed). */
+export const USER_ALLOW_FILE = join(HA_CONFIG_PATH, ".pi-agent", "write-allow.json");
+
+export function readUserAllow(): string[] {
+  try {
+    const j = JSON.parse(readFileSync(USER_ALLOW_FILE, "utf-8"));
+    return Array.isArray(j.allow) ? j.allow.filter((x: unknown) => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+export function writeUserAllow(globs: string[]): void {
+  mkdirSync(dirname(USER_ALLOW_FILE), { recursive: true });
+  writeFileSync(USER_ALLOW_FILE, JSON.stringify({ allow: [...new Set(globs)] }, null, 2) + "\n", "utf-8");
+}
+
+/** Glob to suggest for a blocked path: its top-level folder, or the file itself. */
+export function suggestGlob(absPath: string): string {
+  const rel = relative(resolve(HA_CONFIG_PATH), resolve(absPath)).split("\\").join("/");
+  const top = rel.split("/")[0];
+  return rel.includes("/") ? `${top}/**` : rel;
+}
+
 function loadExtraGlobs(): RegExp[] {
   const patterns: string[] = [];
   try {
@@ -54,7 +82,7 @@ function loadExtraGlobs(): RegExp[] {
     if (Array.isArray(j.allow)) patterns.push(...j.allow.filter((x: unknown) => typeof x === "string"));
   } catch { /* no shipped file — fine */ }
   const user = (process.env.PI_WRITE_GUARD_ALLOW || "").split(/[,\n]/).map((s) => s.trim()).filter(Boolean);
-  patterns.push(...user);
+  patterns.push(...user, ...readUserAllow());
   return patterns.map(globToRe);
 }
 
@@ -150,11 +178,14 @@ export function checkBashCommand(command: string, cwd?: string): { allowed: bool
 }
 
 export function blockReason(target: string): string {
+  const glob = suggestGlob(target);
   return (
     `Write blocked by the Home Assistant write-guard: "${target}" is outside the allowed set. ` +
-    `Under ${HA_CONFIG_PATH} the agent may write configuration.yaml and files it !includes. ` +
-    `For registry/state changes use the ha_* tools. For scratch files use /tmp. ` +
-    `To allow a path, the user can add a glob to the add-on option "write_guard_allow" ` +
-    `(e.g. "custom_components/**", "www/**").`
+    `Under ${HA_CONFIG_PATH} the agent may only write configuration.yaml and files it !includes. ` +
+    `Do NOT try to work around this block. For registry/state changes use the ha_* tools; ` +
+    `for scratch files use /tmp. If this write is really needed, stop and tell the user ` +
+    `that the write-guard blocked it, and that they can allow it by typing ` +
+    `\`/write-allow ${glob}\` in the terminal (or by adding "${glob}" to the add-on ` +
+    `option write_guard_allow), then ask you to retry.`
   );
 }

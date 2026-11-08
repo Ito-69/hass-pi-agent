@@ -69,7 +69,12 @@ The Ollama server must accept connections from the network. Start it with `OLLAM
 - `warn`: only logs what would have been blocked
 - `off`: disables the guard
 
-To let the agent write somewhere else, add globs relative to `/homeassistant` to **write_guard_allow**, for example `custom_components/**` or `www/**`.
+When a write is blocked, the agent tells you which command unblocks it. To allow a path:
+
+- type `/write-allow <glob>` in the terminal, for example `/write-allow www/**`. This takes effect immediately. `/write-allow` alone lists what is allowed, and `/write-allow remove <glob>` takes it back. Only you can run this; the agent can't run slash commands.
+- or add the glob to **write_guard_allow** in the configuration and restart the add-on.
+
+Globs are relative to `/homeassistant`, for example `custom_components/**`, `www/**` or `packages/*.yaml`.
 
 **Automatic backups:** before the Home Assistant tools update or delete something, they save a snapshot to `/homeassistant/.pi-backups/mutations` and log the change. Ask the agent for the mutation log (`ha_mutations`), or use the `/ha-log` and `/ha-backups` commands in the terminal.
 
