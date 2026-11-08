@@ -46,6 +46,19 @@ To use a local `llama.cpp` server (e.g. running on your network or host):
 2. Put your llama.cpp base URL (e.g., `http://192.168.68.50:8080/v1`) into the **openai_api_base** field.
 3. Put your active model name (e.g., `Qwen3.6-35B-A3B-UD-Q5_K_M`) into the **Default Model** field.
 
+### Local models with Ollama
+
+To use models from an [Ollama](https://ollama.com) server on your network:
+
+1. Set **Default Provider** to `ollama`.
+2. Put the server address into **ollama_host**. Any of these work:
+   - `192.168.68.50` (port `11434` is added automatically)
+   - `192.168.68.50:11434`
+   - `http://192.168.68.50:11434`
+3. Optionally set **Default Model** to a model you have pulled (for example `qwen3:8b`). If it is empty or not on the server, the add-on uses the first model Ollama reports. The add-on log lists the models it found.
+
+The Ollama server must accept connections from the network. Start it with `OLLAMA_HOST=0.0.0.0`. The agent sends a long system prompt with many tools, so raise Ollama's context size (for example `OLLAMA_CONTEXT_LENGTH=32768`) and use a model that supports tool calling.
+
 ### Environment
 
 Set environment variables as `KEY=VALUE` pairs — one per entry. Use this for **API keys** and any other configuration.
