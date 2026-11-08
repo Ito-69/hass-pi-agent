@@ -36,7 +36,7 @@ Optionally set a default model. Accepts any model pattern or ID supported by Pi,
 - `google/gemini-2.5-pro`
 - `*sonnet*` (fuzzy match)
 
-Leave empty to use the provider's default model.
+If left empty, the **Default Provider** setting is ignored and Pi starts with the model last selected in Pi (via `/model`). Pi requires a model whenever a provider is set, so set both to pin a specific provider.
 
 ### Local LLM (llama.cpp)
 To use a local `llama.cpp` server (e.g. running on your network or host):

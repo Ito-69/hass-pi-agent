@@ -77,7 +77,7 @@ Optionally set a **Default Model** — accepts any model ID or fuzzy pattern:
 - `Qwen3.6-35B-A3B-UD-Q5_K_M`
 - `*sonnet*` (fuzzy match)
 
-Leave empty to use the provider's default.
+If left empty, the Default Provider is ignored and Pi uses the model last selected in Pi (`/model`). Pi requires a model whenever a provider is set.
 
 ### Additional Packages
 
