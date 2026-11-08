@@ -77,6 +77,17 @@ if bashio::var.has_value "${openai_api_base}"; then
         printf '%s' "dummy" > /var/run/s6/container_environment/OPENAI_API_KEY
         echo "export OPENAI_API_KEY=\"dummy\"" >> /etc/profile.d/pi-agent.sh
     fi
+    # The endpoint is registered in models.json as the "llama-cpp" provider.
+    # pi's built-in "openai" provider ignores OPENAI_BASE_URL and would send
+    # requests to api.openai.com, so switch older "openai" setups over.
+    for var in PI_DEFAULT_PROVIDER PI_SERVICE_PROVIDER; do
+        f="/var/run/s6/container_environment/${var}"
+        if [[ -f "${f}" ]] && [[ "$(cat "${f}")" == "openai" ]]; then
+            bashio::log.warning "openai_api_base is set: using provider 'llama-cpp' instead of 'openai' (${var})"
+            printf '%s' "llama-cpp" > "${f}"
+            echo "export ${var}=\"llama-cpp\"" >> /etc/profile.d/pi-agent.sh
+        fi
+    done
 fi
 
 # --- User-defined environment variables (API keys, provider config, etc.) ---
@@ -109,6 +120,15 @@ if [[ -f /var/run/s6/container_environment/OPENCODE_GO_API_KEY ]] && \
     key_value=$(cat /var/run/s6/container_environment/OPENCODE_GO_API_KEY)
     printf '%s' "${key_value}" > /var/run/s6/container_environment/OPENCODE_API_KEY
     echo "export OPENCODE_API_KEY=\"${key_value}\"" >> /etc/profile.d/pi-agent.sh
+fi
+
+# --- Ollama host (local models) ---
+ollama_host=$(bashio::config 'ollama_host')
+if bashio::var.has_value "${ollama_host}"; then
+    printf '%s' "${ollama_host}" > /var/run/s6/container_environment/PI_OLLAMA_HOST
+    echo "export PI_OLLAMA_HOST=\"${ollama_host}\"" >> /etc/profile.d/pi-agent.sh
+else
+    rm -f /var/run/s6/container_environment/PI_OLLAMA_HOST
 fi
 
 # --- Custom System Prompt ("House Laws") ---
@@ -211,6 +231,66 @@ if openai_base:
         "apiKey": "dummy",
         "models": get_unique(models_list + discovered + [{"id": "llama-cpp"}])
     }
+
+# --- Ollama (local models) ---
+# Accepts "192.168.68.50", "192.168.68.50:11434" or "http://host:11434[/v1]".
+def ollama_base(host):
+    import re
+    h = host.strip().rstrip("/")
+    if not re.match(r"^https?://", h):
+        h = "http://" + h
+    h = re.sub(r"/v1$", "", h)
+    if not re.match(r"^https?://[^/]+:\d+", h):
+        h = re.sub(r"^(https?://[^/]+)", r"\1:11434", h)
+    return h
+
+def fetch_ollama_models(root):
+    import urllib.request
+    try:
+        with urllib.request.urlopen(root + "/api/tags", timeout=5) as r:
+            tags = json.loads(r.read().decode())
+        return [{"id": m["name"]} for m in tags.get("models", []) if m.get("name")]
+    except Exception as e:
+        print(f"Ollama: could not list models from {root}: {e}")
+        return []
+
+def set_env(name, value):
+    with open(f"/var/run/s6/container_environment/{name}", "w") as f:
+        f.write(value)
+    with open("/etc/profile.d/pi-agent.sh", "a") as f:
+        f.write(f"export {name}=\"{value}\"\n")
+
+ollama_host = os.environ.get("PI_OLLAMA_HOST", "")
+if ollama_host.strip():
+    root = ollama_base(ollama_host)
+    discovered = fetch_ollama_models(root)
+    ids = [m["id"] for m in discovered]
+    print(f"Ollama: {root} -> {len(ids)} model(s): {", ".join(ids) or "none"}")
+    configured = []
+    # Pick a model for each role that uses the ollama provider. If the
+    # configured model is missing on the server, fall back to the first one.
+    for prov_var, model_var in (("PI_DEFAULT_PROVIDER", "PI_DEFAULT_MODEL"),
+                                ("PI_SERVICE_PROVIDER", "PI_SERVICE_MODEL")):
+        if os.environ.get(prov_var, "") != "ollama":
+            continue
+        want = os.environ.get(model_var, "").strip()
+        if want and (not ids or want in ids):
+            configured.append({"id": want})
+        elif ids:
+            shown = want or "(empty)"
+            print(f"Ollama: {model_var}={shown} not on server, using {ids[0]}")
+            set_env(model_var, ids[0])
+        else:
+            print(f"Ollama: no models found; set {model_var} manually")
+    data["providers"]["ollama"] = {
+        "baseUrl": root + "/v1",
+        "api": "openai-completions",
+        "apiKey": "ollama",
+        "models": get_unique(configured + discovered) or [{"id": "llama3.2"}]
+    }
+else:
+    data["providers"].pop("ollama", None)
+
 with open(models_path, "w") as f:
     json.dump(data, f, indent=2)
 '
