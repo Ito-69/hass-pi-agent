@@ -38,11 +38,11 @@ Click **AI Assistant** in the sidebar, or go to the **Info** tab and click **Ope
 
 Select your AI provider from the **Default Provider** dropdown:
 
-Anthropic · OpenAI · Google · OpenRouter · Groq · xAI · Mistral · Cerebras · Hugging Face · GitHub Copilot · Amazon Bedrock · Google Vertex · Azure OpenAI · OpenCode-Zen · OpenCode-Go · MiniMax · Omniroute
+Anthropic · OpenAI · Google · OpenRouter · Groq · xAI · Mistral · Cerebras · Hugging Face · GitHub Copilot · Amazon Bedrock · Google Vertex · Azure OpenAI · OpenCode-Zen · OpenCode-Go · MiniMax · Omniroute · llama.cpp (local) · Ollama (local)
 
 ### Local LLM (llama.cpp)
 To use a local `llama.cpp` server (e.g. running on your host VM or network):
-1. Select `openai` as the **Default Provider**.
+1. Select `llama-cpp` as the **Default Provider**.
 2. Put your llama.cpp base URL (e.g., `http://192.168.68.50:8080/v1`) into the **openai_api_base** field.
 3. Put your active model name (e.g., `Qwen3.6-35B-A3B-UD-Q5_K_M`) into the **Default Model** field.
 
