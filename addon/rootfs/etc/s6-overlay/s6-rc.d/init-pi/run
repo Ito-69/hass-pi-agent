@@ -131,6 +131,25 @@ else
     rm -f /var/run/s6/container_environment/PI_OLLAMA_HOST
 fi
 
+# --- Write-guard (filesystem write allowlist for write/edit/bash) ---
+write_guard_mode=$(bashio::config 'write_guard')
+if bashio::var.has_value "${write_guard_mode}"; then
+    printf '%s' "${write_guard_mode}" > /var/run/s6/container_environment/PI_WRITE_GUARD_MODE
+    echo "export PI_WRITE_GUARD_MODE=\"${write_guard_mode}\"" >> /etc/profile.d/pi-agent.sh
+fi
+# Extra writable globs (relative to /homeassistant), joined with commas.
+write_guard_allow=""
+for entry in $(bashio::config 'write_guard_allow'); do
+    write_guard_allow="${write_guard_allow:+${write_guard_allow},}${entry}"
+done
+if [[ -n "${write_guard_allow}" ]]; then
+    printf '%s' "${write_guard_allow}" > /var/run/s6/container_environment/PI_WRITE_GUARD_ALLOW
+    echo "export PI_WRITE_GUARD_ALLOW=\"${write_guard_allow}\"" >> /etc/profile.d/pi-agent.sh
+    bashio::log.info "Write-guard extra allowlist: ${write_guard_allow}"
+else
+    rm -f /var/run/s6/container_environment/PI_WRITE_GUARD_ALLOW
+fi
+
 # --- Custom System Prompt ("House Laws") ---
 custom_system_prompt=$(bashio::config 'custom_system_prompt')
 if bashio::var.has_value "${custom_system_prompt}"; then

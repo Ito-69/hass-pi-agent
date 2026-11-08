@@ -1,0 +1,4 @@
+{
+  "_readme": "Extra writable paths for the Pi agent under /homeassistant (relative globs). configuration.yaml and everything it !includes are always writable. Users can add their own via the add-on option 'write_guard_allow'. 'dir/**' = anything under dir; '*' = one path segment.",
+  "allow": []
+}

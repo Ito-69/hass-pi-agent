@@ -61,6 +61,20 @@ To use models from an [Ollama](https://ollama.com) server on your network:
 
 The Ollama server must accept connections from the network. Start it with `OLLAMA_HOST=0.0.0.0`. The agent sends a long system prompt with many tools, so raise Ollama's context size (for example `OLLAMA_CONTEXT_LENGTH=32768`) and use a model that supports tool calling.
 
+### Safety: write-guard and backups
+
+**Write-guard** (`write_guard`, default `strict`) stops the agent's built-in file tools (`write`, `edit` and obvious `bash` writes such as `>`, `rm`, `sed -i`, `cp`, `mv`) from changing files under `/homeassistant` other than `configuration.yaml` and the files it `!include`s. This protects `.storage`, `secrets.yaml` and similar files from accidental edits. Changes made through the Home Assistant tools (`ha_*`) are not affected.
+
+- `strict`: blocks the write and tells the agent why
+- `warn`: only logs what would have been blocked
+- `off`: disables the guard
+
+To let the agent write somewhere else, add globs relative to `/homeassistant` to **write_guard_allow**, for example `custom_components/**` or `www/**`.
+
+**Automatic backups:** before the Home Assistant tools update or delete something, they save a snapshot to `/homeassistant/.pi-backups/mutations` and log the change. Ask the agent for the mutation log (`ha_mutations`), or use the `/ha-log` and `/ha-backups` commands in the terminal.
+
+**Bash timeout:** agent shell commands time out after 60 seconds by default (maximum 600) so a hanging command can't block the agent.
+
 ### Environment
 
 Set environment variables as `KEY=VALUE` pairs — one per entry. Use this for **API keys** and any other configuration.

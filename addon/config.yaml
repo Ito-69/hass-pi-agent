@@ -36,6 +36,8 @@ options:
   environment: []
   additional_packages: []
   custom_system_prompt: ''
+  write_guard: strict
+  write_guard_allow: []
 schema:
   default_provider: >-
     list(anthropic|openai|google|openrouter|groq|xai|mistral|cerebras|huggingface|github-copilot|amazon-bedrock|google-vertex|azure-openai-responses|opencode|opencode-go|minimax|omniroute|llama-cpp|ollama)
@@ -52,3 +54,6 @@ schema:
   additional_packages:
     - str
   custom_system_prompt: str?
+  write_guard: list(strict|warn|off)?
+  write_guard_allow:
+    - str?
