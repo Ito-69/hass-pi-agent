@@ -90,6 +90,64 @@ If left empty, the Default Provider is ignored and Pi uses the model last select
 
 Install extra Alpine Linux packages at startup (e.g., `jq`, `imagemagick`).
 
+## Safety
+
+The assistant can change your Home Assistant setup, so it has a few safety nets.
+
+### Which folders the assistant can write to
+
+The assistant's own file tools (writing and editing files, and shell commands such as `>`, `rm`, `sed -i`, `cp`, `mv`) are limited by the **write-guard**:
+
+| Location | Can the assistant write? |
+|---|---|
+| `configuration.yaml` | ✅ Yes |
+| Files that `configuration.yaml` `!include`s (`automations.yaml`, `scripts.yaml`, `scenes.yaml`, ...) | ✅ Yes |
+| Folders loaded with `!include_dir_*` (for example `packages/`) | ✅ Yes |
+| Anything outside `/homeassistant` (`/tmp`, `/share`, `/media`, ...) | ✅ Yes |
+| `.storage/` (Home Assistant's internal database files) | ❌ Blocked |
+| `secrets.yaml` | ❌ Blocked |
+| `custom_components/`, `www/`, `blueprints/`, `themes/` and any other folder not included from `configuration.yaml` | ❌ Blocked, unless you allow it |
+
+Changes made through the assistant's Home Assistant tools (entities, automations, dashboards, helpers, ...) go through the Home Assistant API and are **not** affected by the write-guard.
+
+### What to do when the assistant is blocked
+
+The assistant will tell you that the write-guard blocked a file and suggest a command, for example:
+
+> The write-guard blocked `/homeassistant/www/card.js`. You can allow it with `/write-allow www/**`.
+
+You have three options:
+
+1. **Allow it from the chat (no restart needed).** Type the command in the assistant's terminal and then ask it to retry:
+   ```
+   /write-allow www/**
+   ```
+   - `/write-allow` with no arguments shows what is currently allowed
+   - `/write-allow remove www/**` takes the permission back
+
+   Only you can run this command. The assistant can't run slash commands, so it can't unblock itself.
+
+2. **Allow it permanently in the add-on configuration.** Add the folder to **write_guard_allow** (for example `custom_components/**`), save, and restart the add-on.
+
+3. **Change the mode** with the **write_guard** option:
+   - `strict` (default): block and explain
+   - `warn`: allow everything, but log what would have been blocked
+   - `off`: disable the write-guard
+
+Paths are relative to `/homeassistant`. `folder/**` means everything inside that folder. `*` matches one name, for example `packages/*.yaml`.
+
+### Automatic backups before changes
+
+Before the assistant's Home Assistant tools update or delete something (an entity, automation, script, dashboard, helper, area, ...), they save a snapshot of the old state to `/homeassistant/.pi-backups/mutations` and log the change. To see or undo a change:
+- ask the assistant: *"show me the recent changes"* or *"restore the automation you changed before"*
+- or type `/ha-log` (change log) or `/ha-backups` (snapshots) in the terminal
+
+The newest 200 snapshots are kept.
+
+### Command timeout
+
+Shell commands the assistant runs stop after 60 seconds by default (it can ask for up to 10 minutes) so a hanging command can't freeze the assistant.
+
 ## What can it do?
 
 HASS AI Assistant has full access to your Home Assistant instance:

@@ -12,6 +12,7 @@ import { apiGet, apiPost, apiDelete } from "../lib/api.js";
 import { timeSince, formatTrace, renderMarkdownResult, renderToolCall } from "../lib/format.js";
 import type { HAState, TraceListEntry } from "../lib/types.js";
 import { toYaml } from "../lib/yaml.js";
+import { backupBeforeMutation } from "../lib/mutation-log.js";
 
 // ── Helpers ──────────────────────────────────────────────────
 
@@ -159,9 +160,24 @@ async function handleUpdate(params: Record<string, unknown>): Promise<string> {
   let existing: Record<string, unknown>;
   try {
     existing = await apiGet<Record<string, unknown>>(`/api/config/script/config/${scriptId}`);
-  } catch {
-    throw new Error(`Script '${scriptId}' not found`);
+  } catch (err) {
+    // apiGet throws "HA API <status>: <body>". A 404 means the script genuinely
+    // isn't in the config store; anything else (5xx, parse error) means the
+    // store couldn't be read — usually invalid/unreadable scripts.yaml — which is
+    // NOT the same as "missing". Say which, so the cause is actionable.
+    const msg = err instanceof Error ? err.message : String(err);
+    const status = Number(msg.match(/HA API (\d+):/)?.[1]);
+    if (status === 404) {
+      throw new Error(`Script '${scriptId}' not found — no such script in the config store.`);
+    }
+    throw new Error(
+      `Couldn't read script '${scriptId}' from the config store (${msg}). ` +
+      `This usually means scripts.yaml is invalid or unreadable — not that the script is missing. ` +
+      `Run \`ha_restart action:validate\` to find the YAML error, fix it, then retry.`
+    );
   }
+
+  backupBeforeMutation("ha_scripts", "update", scriptId, existing);
 
   const { id: _id, ...existingWithoutId } = existing;
   const merged = { ...existingWithoutId, ...config };
@@ -179,6 +195,12 @@ async function handleDelete(params: Record<string, unknown>): Promise<string> {
   if (!params.confirm) {
     return `⚠️ **Confirm delete**: script \`${scriptId}\`\n\nCall again with \`confirm: true\` to proceed.`;
   }
+
+  try {
+    const existing = await apiGet(`/api/config/script/config/${scriptId}`);
+    backupBeforeMutation("ha_scripts", "delete", scriptId, existing);
+  } catch { /* best-effort */ }
+
   await apiDelete(`/api/config/script/config/${scriptId}`);
   return `✅ Deleted script '${scriptId}'`;
 }
