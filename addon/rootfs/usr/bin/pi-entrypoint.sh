@@ -17,11 +17,12 @@ declare -a PI_ARGS=()
 # Load HA extension from container image
 PI_ARGS+=(--extension /opt/ha-extension)
 
-if [[ -n "${PI_DEFAULT_PROVIDER:-}" ]]; then
-    PI_ARGS+=(--provider "${PI_DEFAULT_PROVIDER}")
-fi
-
+# pi requires --model whenever --provider is given, so only pass --provider
+# together with a model. With no model, pi uses its saved/default model.
 if [[ -n "${PI_DEFAULT_MODEL:-}" ]]; then
+    if [[ -n "${PI_DEFAULT_PROVIDER:-}" ]]; then
+        PI_ARGS+=(--provider "${PI_DEFAULT_PROVIDER}")
+    fi
     PI_ARGS+=(--model "${PI_DEFAULT_MODEL}")
 fi
 

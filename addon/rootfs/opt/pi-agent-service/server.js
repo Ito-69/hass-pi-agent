@@ -198,13 +198,14 @@ function spawnPi(question, overrides = {}, onComplete = null) {
 
   // Provider priority: per-call override > service config > default
   const provider = [overrides.provider, piEnv.PI_SERVICE_PROVIDER, piEnv.PI_DEFAULT_PROVIDER].find(validStr);
-  if (provider) {
-    args.push("--provider", provider);
-  }
 
   // Model priority: per-call override > service config > default
   const model = [overrides.model, piEnv.PI_SERVICE_MODEL, piEnv.PI_DEFAULT_MODEL].find(validStr);
+
+  // pi requires --model whenever --provider is given; without a model,
+  // omit both so pi falls back to its saved/default model.
   if (model) {
+    if (provider) args.push("--provider", provider);
     args.push("--model", model);
   }
 

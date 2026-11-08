@@ -28,7 +28,7 @@ map:
   - backup:rw
 options:
   default_provider: openai
-  default_model: ''
+  default_model: gpt-6.1-sol
   openai_api_base: ''
   install_integration: true
   fresh_session: false
