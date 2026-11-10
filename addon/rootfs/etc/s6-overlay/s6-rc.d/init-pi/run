@@ -177,13 +177,19 @@ source /etc/profile.d/pi-agent.sh
 # --- Generate models.json for custom/local providers ---
 python3 -c '
 import json, os
-models_path = "/data/pi-agent/agent/models.json"
+# pi reads models.json from $PI_CODING_AGENT_DIR (not a nested agent/ dir).
+agent_dir = os.environ.get("PI_CODING_AGENT_DIR", "/data/pi-agent")
+models_path = os.path.join(agent_dir, "models.json")
+legacy_path = os.path.join(agent_dir, "agent", "models.json")
 os.makedirs(os.path.dirname(models_path), exist_ok=True)
-try:
-    with open(models_path, "r") as f:
-        data = json.load(f)
-except Exception:
-    data = {}
+data = {}
+for path in (models_path, legacy_path):
+    try:
+        with open(path, "r") as f:
+            data = json.load(f)
+        break
+    except Exception:
+        pass
 if "providers" not in data:
     data["providers"] = {}
 
@@ -244,6 +250,7 @@ if omniroute_key:
     }
 if openai_base:
     discovered = fetch_models(openai_base, "dummy")
+    print(f"llama-cpp: {openai_base} -> {len(discovered)} model(s): {", ".join(m["id"] for m in discovered) or "none"}")
     data["providers"]["llama-cpp"] = {
         "baseUrl": openai_base,
         "api": "openai-completions",
