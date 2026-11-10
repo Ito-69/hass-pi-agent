@@ -48,6 +48,8 @@ To use a local `llama.cpp` server (e.g. running on your network or host):
 2. Put your llama.cpp base URL (e.g., `http://192.168.68.50:8080/v1`) into the **openai_api_base** field.
 3. Put your active model name (e.g., `Qwen3.6-35B-A3B-UD-Q5_K_M`) into the **Default Model** field.
 
+The add-on reads the server's context size (`n_ctx` from `/props`) at startup, so the agent compacts the conversation before it outgrows the model. The add-on log shows the models and context size it found. If you switch to a local model in the middle of a long session, run `/compact` with the previous model first, or start a new session with `/new`.
+
 ### Local models with Ollama
 
 To use models from an [Ollama](https://ollama.com) server on your network:
