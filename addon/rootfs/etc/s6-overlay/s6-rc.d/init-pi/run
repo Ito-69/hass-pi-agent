@@ -248,14 +248,37 @@ if omniroute_key:
         "apiKey": omniroute_key,
         "models": get_unique(models_list + discovered + [{"id": "omniroute"}])
     }
+def fetch_llama_ctx(base_url):
+    # llama.cpp reports its runtime context size (n_ctx, per slot) at
+    # <server>/props. Without it pi assumes 128k and compacts too late/early.
+    import urllib.request
+    root = base_url.rstrip("/")
+    if root.endswith("/v1"):
+        root = root[:-3]
+    try:
+        with urllib.request.urlopen(root + "/props", timeout=3) as response:
+            props = json.loads(response.read().decode())
+        n_ctx = (props.get("default_generation_settings") or {}).get("n_ctx") or props.get("n_ctx")
+        if isinstance(n_ctx, int) and n_ctx > 0:
+            return n_ctx
+    except Exception as e:
+        print(f"llama-cpp: could not read context size from {root}/props: {e}")
+    return 0
+
 if openai_base:
     discovered = fetch_models(openai_base, "dummy")
-    print(f"llama-cpp: {openai_base} -> {len(discovered)} model(s): {", ".join(m["id"] for m in discovered) or "none"}")
+    n_ctx = fetch_llama_ctx(openai_base)
+    print(f"llama-cpp: {openai_base} -> {len(discovered)} model(s): {", ".join(m["id"] for m in discovered) or "none"}; context: {n_ctx or "unknown (pi default)"}")
+    llama_models = [dict(m) for m in get_unique(models_list + discovered + [{"id": "llama-cpp"}])]
+    if n_ctx:
+        for m in llama_models:
+            m["contextWindow"] = n_ctx
+            m["maxTokens"] = min(32768, max(1024, n_ctx // 4))
     data["providers"]["llama-cpp"] = {
         "baseUrl": openai_base,
         "api": "openai-completions",
         "apiKey": "dummy",
-        "models": get_unique(models_list + discovered + [{"id": "llama-cpp"}])
+        "models": llama_models
     }
 
 # --- Ollama (local models) ---
