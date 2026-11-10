@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.12.1](https://github.com/Ito-69/hass-pi-agent/compare/v0.12.0...v0.12.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* **addon:** write models.json where pi reads it ([2aebf0f](https://github.com/Ito-69/hass-pi-agent/commit/2aebf0faca17c4e344011f08469719b12f32c13c))
+* **addon:** write models.json where pi reads it ([6771ffc](https://github.com/Ito-69/hass-pi-agent/commit/6771ffc260a0f1570a20b975b54b98b0fa08d257))
+
 ## [0.12.0](https://github.com/Ito-69/hass-pi-agent/compare/v0.11.0...v0.12.0) (2026-11-08)
 
 
