@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.13.0](https://github.com/Ito-69/hass-pi-agent/compare/v0.12.1...v0.13.0) (2026-11-10)
+
+
+### Features
+
+* **addon:** detect llama.cpp context size; bump pi to 1.5.1 ([a67dcce](https://github.com/Ito-69/hass-pi-agent/commit/a67dccee1e7bb254c32a10c62211d1a655f372c4))
+* **addon:** detect llama.cpp context size; bump pi to 1.5.1 ([a9c633e](https://github.com/Ito-69/hass-pi-agent/commit/a9c633efdd3944a54c003a6b66c69cce78983b6b))
+
 ## [0.12.1](https://github.com/Ito-69/hass-pi-agent/compare/v0.12.0...v0.12.1) (2026-11-10)
 
 
